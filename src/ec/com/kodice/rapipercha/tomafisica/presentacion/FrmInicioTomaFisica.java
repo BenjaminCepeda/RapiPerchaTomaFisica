@@ -51,9 +51,9 @@ public class FrmInicioTomaFisica extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(315, Short.MAX_VALUE)
+                .addContainerGap(306, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(271, 271, 271))
+                .addGap(280, 280, 280))
         );
 
         mnuTomaFisica.setText("Toma física");
