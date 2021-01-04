@@ -6,6 +6,9 @@
 
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
 
+import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.optionalusertools.PickerUtilities;
+import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import ec.com.kodice.rapipercha.tomafisica.negocio.OrdenBO;
 import ec.com.kodice.rapipercha.administracion.persistencia.EmpleadoVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
@@ -30,7 +33,8 @@ public class FrmTomaFisicaAdministracion extends JFrame {
     /** Creates new form FrmPerfilAdministracion */
     public FrmTomaFisicaAdministracion() {
         initComponents();
-        cargarModelo();
+        dtpFecha.setDateToToday();
+        cargarModelo(dtpFecha.getDate());
         this.setLocationRelativeTo(null);
     }
     public FrmTomaFisicaAdministracion(EmpleadoVO empleadoLogueado, 
@@ -39,13 +43,12 @@ public class FrmTomaFisicaAdministracion extends JFrame {
         this.proveedorEmpleadoLogueado = proveedorEmpleadoLoguedo;
         initComponents();
         dtpFecha.setDateToToday();
-        cargarModelo();
+        cargarModelo(dtpFecha.getDate());
         this.setLocationRelativeTo(null);
     }
 
-    private void cargarModelo(){        
+    private void cargarModelo(LocalDate fecha){        
         OrdenBO ordenBO = new OrdenBO();
-        LocalDate fecha = LocalDate.now();
         lblNombreEmpresa.setText(proveedorEmpleadoLogueado.getNombreComercial()
             + " - "+ proveedorEmpleadoLogueado.getRazonSocial());
         lblNombreEmpleado.setText(empleadoLogueado.getNombres() + " " +
@@ -97,6 +100,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
         lblLogoKodice = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         dtpFecha = new com.github.lgooddatepicker.components.DatePicker();
+        btnBuscar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -114,21 +118,21 @@ public class FrmTomaFisicaAdministracion extends JFrame {
 
         lblLogoRapipercha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/logo-rapipercha.png"))); // NOI18N
 
+        lblTitulo.setText("ORDENES ASIGNADAS A:");
         lblTitulo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitulo.setText("ORDENES ASIGNADAS A:");
 
+        lblNombreEmpleado.setText("NOMBRE EMPLEADO");
         lblNombreEmpleado.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblNombreEmpleado.setForeground(new java.awt.Color(255, 255, 255));
-        lblNombreEmpleado.setText("NOMBRE EMPLEADO");
 
+        lblTituloEmpresa.setText("EMPRESA:");
         lblTituloEmpresa.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblTituloEmpresa.setForeground(new java.awt.Color(255, 255, 255));
-        lblTituloEmpresa.setText("EMPRESA:");
 
+        lblNombreEmpresa.setText("NOMBRE EMPRESA");
         lblNombreEmpresa.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblNombreEmpresa.setForeground(new java.awt.Color(255, 255, 255));
-        lblNombreEmpresa.setText("NOMBRE EMPRESA");
 
         javax.swing.GroupLayout pnlCabeceraLayout = new javax.swing.GroupLayout(pnlCabecera);
         pnlCabecera.setLayout(pnlCabeceraLayout);
@@ -326,6 +330,13 @@ public class FrmTomaFisicaAdministracion extends JFrame {
 
         jLabel1.setText("Fecha a realizar:");
 
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlDetalleLayout = new javax.swing.GroupLayout(pnlDetalle);
         pnlDetalle.setLayout(pnlDetalleLayout);
         pnlDetalleLayout.setHorizontalGroup(
@@ -337,6 +348,8 @@ public class FrmTomaFisicaAdministracion extends JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dtpFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnBuscar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlDetalleLayout.setVerticalGroup(
@@ -344,7 +357,9 @@ public class FrmTomaFisicaAdministracion extends JFrame {
             .addGroup(pnlDetalleLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(dtpFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(dtpFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnBuscar))
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -377,7 +392,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlContenedor, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
+            .addComponent(pnlContenedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -386,7 +401,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo();
         frmProveedorNuevo.setVisible(true);  
-        cargarModelo();
+        cargarModelo(dtpFecha.getDate());
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
@@ -415,7 +430,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
                     ordenBO = null;
                 }
             }
-            cargarModelo();
+            cargarModelo(dtpFecha.getDate());
         }
 
     }//GEN-LAST:event_btnBorrarActionPerformed
@@ -436,7 +451,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
             FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo(
                     Integer.valueOf(codigoElegido), false);
             frmProveedorNuevo.setVisible(true);
-            cargarModelo();
+            cargarModelo(dtpFecha.getDate());
         }
     }//GEN-LAST:event_btnEditarActionPerformed
 
@@ -451,7 +466,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
             FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo(
                 Integer.valueOf(codigoElegido), true);
             frmProveedorNuevo.setVisible(true);
-            cargarModelo();
+            cargarModelo(dtpFecha.getDate());
         }
     }//GEN-LAST:event_btnConsultarActionPerformed
 
@@ -470,10 +485,15 @@ public class FrmTomaFisicaAdministracion extends JFrame {
                 FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo(
                         Integer.valueOf(codigoElegido),true);
                 frmProveedorNuevo.setVisible(true);
-                cargarModelo();
+                cargarModelo(dtpFecha.getDate());
             }
         }
     }//GEN-LAST:event_tblOrdenesMousePressed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+
+        cargarModelo(dtpFecha.getDate());
+    }//GEN-LAST:event_btnBuscarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -515,6 +535,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBorrar;
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnConsultar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnNuevo;

@@ -188,11 +188,14 @@ public class OrdenDAO {
             conexion = CustomConnection.getConnection();
             String consulta = "SELECT ord_codigo, loc_codigo, usu_codigo, "
                     + "ord_fecha_generacion, ord_fecha_arealizar, "
-                    + "ord_codigo_externo_orden, ord_codigo_usuario_generacion, "
+                    + "ord_codigo_externo_orden, "
+                    + "ord_codigo_usuario_generacion, "
                     + "ord_estado "
                     + "FROM TORDENES "
                     + "WHERE usu_codigo = ? and "
-                    + "ord_fecha_arealizar = ? ";
+                    + "DATE_FORMAT(ord_fecha_arealizar,'%Y%m%d') = "
+                    + "DATE_FORMAT( ?, '%Y%m%d') "
+                    + "ORDER BY ord_fecha_arealizar";
             sentencia = conexion.prepareStatement(consulta);
             sentencia.setInt(1, usuarioCodigo);
             sentencia.setObject(2, fechaARealizar);
