@@ -5,6 +5,7 @@
  */
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
 
+
 /**
  *
  * @author Pernosymas
@@ -15,8 +16,8 @@ public class Principal {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        
+        FrmLogin frmLogin = new FrmLogin();
+        frmLogin.setVisible(true);        
     }
     
 }
