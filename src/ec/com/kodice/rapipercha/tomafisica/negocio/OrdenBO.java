@@ -100,7 +100,9 @@ public class OrdenBO {
                     usuarioGeneroOrden = usuarioBO.buscar(ordenVO.getCodigo());
                     dtmListaElementos.addRow(new Object[]{
                         ordenVO.getCodigo(), ordenVO.getFechaARealizar(),
-                      ordenVO.getCodigoExternoOrden(),
+                      ordenVO.getLocalVO().getCentroExpendioVO().getRazonSocial(),
+                      ordenVO.getLocalVO().getNombre(),
+                      ordenVO.getLocalVO().getDireccion(),
                       usuarioGeneroOrden.getNombre(),
                       ordenVO.getFechaGeneracion()});
                 }

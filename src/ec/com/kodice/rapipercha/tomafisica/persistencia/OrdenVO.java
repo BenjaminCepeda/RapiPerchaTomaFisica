@@ -6,6 +6,7 @@
 
 package ec.com.kodice.rapipercha.tomafisica.persistencia;
 
+import ec.com.kodice.rapipercha.administracion.persistencia.LocalVO;
 import java.time.LocalDateTime;
 
 /**
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
  */
 public class OrdenVO {
     private int codigo;
-    private int localCodigo;
+    private LocalVO localVO = new LocalVO();
     private int usuarioCodigo;
     private LocalDateTime fechaGeneracion;
     private LocalDateTime fechaARealizar;
@@ -32,12 +33,12 @@ public class OrdenVO {
         this.codigo = codigo;
     }
 
-    public int getLocalCodigo() {
-        return localCodigo;
+    public LocalVO getLocalVO() {
+        return localVO;
     }
 
-    public void setLocalCodigo(int localCodigo) {
-        this.localCodigo = localCodigo;
+    public void setLocalVO(LocalVO localVO) {
+        this.localVO = localVO;
     }
 
     public int getUsuarioCodigo() {
@@ -93,7 +94,7 @@ public class OrdenVO {
             String codigoExternoOrden, int codigoUsuarioGeneracion, 
             String estado) {
         this.codigo = codigo;
-        this.localCodigo = localCodigo;
+        this.localVO.setCodigo(localCodigo);
         this.usuarioCodigo = usuarioCodigo;
         this.fechaGeneracion = fechaGeneracion;
         this.fechaARealizar = fechaARealizar;

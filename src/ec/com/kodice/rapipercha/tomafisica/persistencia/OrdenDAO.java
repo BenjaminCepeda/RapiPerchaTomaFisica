@@ -44,7 +44,7 @@ public class OrdenDAO {
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
             sentencia = conexion.prepareStatement(consulta,
                     PreparedStatement.RETURN_GENERATED_KEYS);
-            sentencia.setInt(1, ordenVO.getLocalCodigo());
+            sentencia.setInt(1, ordenVO.getLocalVO().getCodigo());
             sentencia.setInt(2, ordenVO.getUsuarioCodigo());
             sentencia.setObject(3, ordenVO.getFechaGeneracion());
             sentencia.setObject(4, ordenVO.getFechaARealizar());
@@ -186,12 +186,16 @@ public class OrdenDAO {
         OrdenVO ordenVO = null;
         try {
             conexion = CustomConnection.getConnection();
-            String consulta = "SELECT ord_codigo, loc_codigo, usu_codigo, "
+            String consulta = "SELECT ord_codigo, L.loc_codigo, usu_codigo, "
                     + "ord_fecha_generacion, ord_fecha_arealizar, "
                     + "ord_codigo_externo_orden, "
-                    + "ord_codigo_usuario_generacion, "
-                    + "ord_estado "
+                    + "ord_codigo_usuario_generacion, ord_estado, "
+                    + "L.loc_nombre, loc_direccion, "
+                    + "C.cen_codigo, C.cen_ruc, C.cen_razon_social, "
+                    + "C.cen_nombre_comercial "
                     + "FROM TORDENES "
+                    + "INNER JOIN TLOCALES L ON TORDENES.loc_codigo = l.loc_codigo "
+                    + "INNER JOIN TCENTRO_EXPENDIO C ON L.cen_codigo = C.cen_codigo "
                     + "WHERE usu_codigo = ? and "
                     + "DATE_FORMAT(ord_fecha_arealizar,'%Y%m%d') = "
                     + "DATE_FORMAT( ?, '%Y%m%d') "
@@ -212,6 +216,11 @@ public class OrdenDAO {
                         resultado.getString("ord_codigo_externo_orden"),
                         resultado.getInt("ord_codigo_usuario_generacion"),
                         resultado.getString("ord_estado"));
+                ordenVO.getLocalVO().setDireccion(resultado.getString("loc_direccion") );
+                ordenVO.getLocalVO().setNombre(resultado.getString("loc_nombre") );                
+                ordenVO.getLocalVO().getCentroExpendioVO().setCodigo(resultado.getInt("cen_codigo"));
+                ordenVO.getLocalVO().getCentroExpendioVO().setRazonSocial(resultado.getString("cen_razon_social"));
+                ordenVO.getLocalVO().getCentroExpendioVO().setNombreComercial(resultado.getString("cen_nombre_comercial"));
                 listaElementos.add(ordenVO);
             }
         } 
@@ -253,7 +262,7 @@ public class OrdenDAO {
                     + "ord_estado = ? "
                     + "WHERE ord_codigo = ?";
             sentencia = conexion.prepareStatement(consulta);
-            sentencia.setInt(1, ordenVO.getLocalCodigo());
+            sentencia.setInt(1, ordenVO.getLocalVO().getCodigo());
             sentencia.setInt(2, ordenVO.getUsuarioCodigo());
             sentencia.setObject(3, ordenVO.getFechaARealizar());
             sentencia.setString(4, ordenVO.getCodigoExternoOrden());

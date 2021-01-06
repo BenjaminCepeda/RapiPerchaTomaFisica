@@ -58,8 +58,8 @@ public class FrmTomaFisicaAdministracion extends JFrame {
             tblOrdenes.setModel(ordenBO.generaModeloDatosTabla( 
                     empleadoLogueado.getUsuario().getCodigo(), fecha,
                 new Object[]{
-                    "CODIGO", "A REALIZAR","CODIGO EXTERNO", "GENERADO POR",
-                    "GENERADA EN"}));
+                    "CODIGO", "A REALIZAR", "RAZON SOCIAL", "LOCAL", "DIRECCION",
+                    "GENERADO POR", "GENERADA EN"}));
         }
         catch ( Exception e) {
             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
