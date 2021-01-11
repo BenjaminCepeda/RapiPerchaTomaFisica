@@ -102,6 +102,9 @@ public class OrdenVO {
         this.codigoUsuarioGeneracion = codigoUsuarioGeneracion;
         this.estado = estado;
     }
+
+    public OrdenVO() {
+    }
     
     
 
