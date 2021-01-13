@@ -6,10 +6,12 @@
 
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
 
+import ec.com.kodice.rapipercha.administracion.persistencia.CentroExpendioVO;
 import ec.com.kodice.rapipercha.tomafisica.negocio.OrdenBO;
 import ec.com.kodice.rapipercha.administracion.persistencia.EmpleadoVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
 import ec.com.kodice.rapipercha.administracion.presentacion.FrmProveedorNuevo;
+import ec.com.kodice.rapipercha.tomafisica.negocio.DetalleOrdenBO;
 import ec.com.kodice.rapipercha.tomafisica.persistencia.OrdenVO;
 import ec.com.kodice.rapipercha.util.UtilPresentacion;
 import java.time.format.DateTimeFormatter;
@@ -23,29 +25,35 @@ import javax.swing.JTable;
  * @version v1.0
  * @date 2020/12/06
  */
-public class FrmTomaFisicaNuevo extends JFrame {
+public class FrmDetalleOrdenListado extends JFrame {
     private EmpleadoVO empleadoLogueado= null;
     private ProveedorVO proveedorEmpleadoLogueado = null;
     private int codigoOrdenActual = 0;
 
     /** Creates new form FrmPerfilAdministracion */
-    public FrmTomaFisicaNuevo() {
+    public FrmDetalleOrdenListado() {
         initComponents();
         this.setLocationRelativeTo(null);
     }
-    public FrmTomaFisicaNuevo(EmpleadoVO empleadoLogueado, 
-            ProveedorVO proveedorEmpleadoLoguedo, int codigoOrdenActual) {
+    public FrmDetalleOrdenListado(EmpleadoVO empleadoLogueado, 
+            ProveedorVO proveedorEmpleadoLoguedo, int codigoOrdenActual,
+            String nombreCentroExpendio, String nombreLocal,
+            boolean soloLectura) {
         this.empleadoLogueado = empleadoLogueado;
         this.proveedorEmpleadoLogueado = proveedorEmpleadoLoguedo;
         this.codigoOrdenActual = codigoOrdenActual;
+        initComponents();
         OrdenBO ordenBO = new OrdenBO();
         OrdenVO ordenVO = new OrdenVO();
-        lblNombreEmpresa.setText(proveedorEmpleadoLogueado.getNombreComercial()
-            + " - "+ proveedorEmpleadoLogueado.getRazonSocial());
+        lblRazonSocial.setText(proveedorEmpleadoLogueado.getRazonSocial());
+        lblNombreComercial.setText(proveedorEmpleadoLogueado.getNombreComercial());
         lblNombreEmpleado.setText(empleadoLogueado.getNombres() + " " +
                 empleadoLogueado.getApellidos());        
+        
         try {
             ordenVO = ordenBO.buscar(codigoOrdenActual);
+            lblCentroExpendio.setText(nombreCentroExpendio);
+            lblLocal.setText(nombreLocal);
             lblCodigoOrden.setText(String.valueOf(ordenVO.getCodigo()));
             lblFechaOrden.setText(ordenVO.getFechaARealizar().format(DateTimeFormatter.ISO_DATE));            
         }
@@ -55,25 +63,24 @@ public class FrmTomaFisicaNuevo extends JFrame {
         finally{
             ordenBO = null;   
         }
-        initComponents();
         cargarModelo();
         this.setLocationRelativeTo(null);
     }
 
     private void cargarModelo(){        
-        OrdenBO ordenBO = new OrdenBO();        
+        DetalleOrdenBO detalleOrdenBO = new DetalleOrdenBO();        
         try {
-            tblDetalleOrden.setModel(ordenBO.generaModeloDatosTabla( 
-                    empleadoLogueado.getUsuario().getCodigo(), fecha,
-                new Object[]{
-                    "CODIGO", "A REALIZAR", "RAZON SOCIAL", "LOCAL", "DIRECCION",
-                    "GENERADO POR", "GENERADA EN"}));
+            tblDetalleOrden.setModel(detalleOrdenBO.generaModeloDatosTabla( 
+                    this.codigoOrdenActual,
+                    new Object[]{
+                    "CODIGO", "PRODUCTO", "CODIGO EXTERNO", "MINIMO", "EXIST.",
+                    "CANT. REV.", "CANT.MAL", "CANT.VENC."}));
         }
         catch ( Exception e) {
             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
         }
         finally{
-            ordenBO = null;   
+            detalleOrdenBO = null;   
         }
             
     }
@@ -90,13 +97,19 @@ public class FrmTomaFisicaNuevo extends JFrame {
         pnlCabecera = new javax.swing.JPanel();
         lblLogoRapipercha = new javax.swing.JLabel();
         lblTituloEmpleado = new javax.swing.JLabel();
-        lblNombreEmpleado = new javax.swing.JLabel();
-        lblTituloEmpresa = new javax.swing.JLabel();
-        lblNombreEmpresa = new javax.swing.JLabel();
+        lblTituloRazonSocial = new javax.swing.JLabel();
         lblTituloOrden = new javax.swing.JLabel();
         lblCodigoOrden = new javax.swing.JLabel();
         lblTituloFecha = new javax.swing.JLabel();
         lblFechaOrden = new javax.swing.JLabel();
+        lblRazonSocial = new javax.swing.JLabel();
+        lblNombreEmpleado = new javax.swing.JLabel();
+        lblTituloNombreComercial = new javax.swing.JLabel();
+        lblNombreComercial = new javax.swing.JLabel();
+        lblTituloCentro = new javax.swing.JLabel();
+        lblCentroExpendio = new javax.swing.JLabel();
+        lblTituloLocal = new javax.swing.JLabel();
+        lblLocal = new javax.swing.JLabel();
         pnlDetalle = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDetalleOrden = new javax.swing.JTable();
@@ -112,30 +125,22 @@ public class FrmTomaFisicaNuevo extends JFrame {
         pnlContenedor.setAlignmentY(0.0F);
         pnlContenedor.setPreferredSize(new java.awt.Dimension(800, 650));
 
+        pnlCabecera.setBackground(new java.awt.Color(64, 124, 202));
         pnlCabecera.setAlignmentX(0.0F);
         pnlCabecera.setAlignmentY(0.0F);
-        pnlCabecera.setBackground(new java.awt.Color(64, 124, 202));
         pnlCabecera.setMaximumSize(new java.awt.Dimension(32767, 90));
         pnlCabecera.setMinimumSize(new java.awt.Dimension(0, 90));
         pnlCabecera.setPreferredSize(new java.awt.Dimension(445, 90));
 
         lblLogoRapipercha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/logo-rapipercha.png"))); // NOI18N
 
-        lblTituloEmpleado.setText("ORDENE ASIGNADA A:");
         lblTituloEmpleado.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblTituloEmpleado.setForeground(new java.awt.Color(255, 255, 255));
+        lblTituloEmpleado.setText("ASIGNADO A:");
 
-        lblNombreEmpleado.setText("NOMBRE EMPLEADO");
-        lblNombreEmpleado.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        lblNombreEmpleado.setForeground(new java.awt.Color(255, 255, 255));
-
-        lblTituloEmpresa.setText("EMPRESA:");
-        lblTituloEmpresa.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        lblTituloEmpresa.setForeground(new java.awt.Color(255, 255, 255));
-
-        lblNombreEmpresa.setText("NOMBRE EMPRESA");
-        lblNombreEmpresa.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        lblNombreEmpresa.setForeground(new java.awt.Color(255, 255, 255));
+        lblTituloRazonSocial.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblTituloRazonSocial.setForeground(new java.awt.Color(255, 255, 255));
+        lblTituloRazonSocial.setText("RAZON SOCIAL:");
 
         lblTituloOrden.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblTituloOrden.setForeground(new java.awt.Color(255, 255, 255));
@@ -153,6 +158,38 @@ public class FrmTomaFisicaNuevo extends JFrame {
         lblFechaOrden.setForeground(new java.awt.Color(255, 255, 255));
         lblFechaOrden.setText("2021-01-01:00");
 
+        lblRazonSocial.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblRazonSocial.setForeground(new java.awt.Color(255, 255, 255));
+        lblRazonSocial.setText("RAZON SOCIAL");
+
+        lblNombreEmpleado.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblNombreEmpleado.setForeground(new java.awt.Color(255, 255, 255));
+        lblNombreEmpleado.setText("NOMBRE EMPLEADO");
+
+        lblTituloNombreComercial.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblTituloNombreComercial.setForeground(new java.awt.Color(255, 255, 255));
+        lblTituloNombreComercial.setText("NOMBRE COMERCIAL:");
+
+        lblNombreComercial.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblNombreComercial.setForeground(new java.awt.Color(255, 255, 255));
+        lblNombreComercial.setText("NOMBRE COMERCIAL");
+
+        lblTituloCentro.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblTituloCentro.setForeground(new java.awt.Color(255, 255, 255));
+        lblTituloCentro.setText("CENTRO EXPENDIO:");
+
+        lblCentroExpendio.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblCentroExpendio.setForeground(new java.awt.Color(255, 255, 255));
+        lblCentroExpendio.setText("CENTRO DE EXPENDIO");
+
+        lblTituloLocal.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblTituloLocal.setForeground(new java.awt.Color(255, 255, 255));
+        lblTituloLocal.setText("LOCAL:");
+
+        lblLocal.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblLocal.setForeground(new java.awt.Color(255, 255, 255));
+        lblLocal.setText("LOCAL");
+
         javax.swing.GroupLayout pnlCabeceraLayout = new javax.swing.GroupLayout(pnlCabecera);
         pnlCabecera.setLayout(pnlCabeceraLayout);
         pnlCabeceraLayout.setHorizontalGroup(
@@ -161,50 +198,82 @@ public class FrmTomaFisicaNuevo extends JFrame {
                 .addComponent(lblLogoRapipercha)
                 .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlCabeceraLayout.createSequentialGroup()
-                        .addGap(129, 129, 129)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlCabeceraLayout.createSequentialGroup()
-                                .addComponent(lblTituloEmpleado)
+                                .addComponent(lblTituloCentro)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblNombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(lblCentroExpendio, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(pnlCabeceraLayout.createSequentialGroup()
-                                .addComponent(lblTituloEmpresa)
+                                .addComponent(lblTituloRazonSocial)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblNombreEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(lblRazonSocial, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblTituloNombreComercial)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblNombreComercial, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlCabeceraLayout.createSequentialGroup()
-                        .addGap(86, 86, 86)
-                        .addComponent(lblTituloOrden)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblCodigoOrden, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlCabeceraLayout.createSequentialGroup()
+                                .addGap(86, 86, 86)
+                                .addComponent(lblTituloOrden)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lblCodigoOrden, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlCabeceraLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblTituloEmpleado)))
                         .addGap(33, 33, 33)
-                        .addComponent(lblTituloFecha)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblFechaOrden, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 178, Short.MAX_VALUE))
+                        .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlCabeceraLayout.createSequentialGroup()
+                                .addComponent(lblTituloFecha)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pnlCabeceraLayout.createSequentialGroup()
+                                        .addComponent(lblTituloLocal)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(lblLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(lblFechaOrden, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(lblNombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(56, 56, 56)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         pnlCabeceraLayout.setVerticalGroup(
             pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlCabeceraLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblLogoRapipercha)
-                .addContainerGap(20, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlCabeceraLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTituloEmpresa)
-                    .addComponent(lblNombreEmpresa))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTituloEmpleado)
-                    .addComponent(lblNombreEmpleado))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblTituloFecha)
-                        .addComponent(lblFechaOrden)
-                        .addComponent(lblCodigoOrden))
-                    .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblTituloOrden)))
+                    .addGroup(pnlCabeceraLayout.createSequentialGroup()
+                        .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlCabeceraLayout.createSequentialGroup()
+                                .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblTituloRazonSocial)
+                                    .addComponent(lblRazonSocial))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblTituloCentro)
+                                    .addComponent(lblCentroExpendio)))
+                            .addGroup(pnlCabeceraLayout.createSequentialGroup()
+                                .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblTituloNombreComercial)
+                                    .addComponent(lblNombreComercial))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblTituloLocal)
+                                    .addComponent(lblLocal))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblTituloEmpleado)
+                            .addComponent(lblNombreEmpleado))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lblTituloFecha)
+                                .addComponent(lblFechaOrden)
+                                .addComponent(lblCodigoOrden))
+                            .addComponent(lblTituloOrden)))
+                    .addGroup(pnlCabeceraLayout.createSequentialGroup()
+                        .addComponent(lblLogoRapipercha)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -397,14 +466,38 @@ public class FrmTomaFisicaNuevo extends JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmTomaFisicaNuevo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmDetalleOrdenListado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmTomaFisicaNuevo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmDetalleOrdenListado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmTomaFisicaNuevo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmDetalleOrdenListado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmTomaFisicaNuevo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmDetalleOrdenListado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -417,7 +510,7 @@ public class FrmTomaFisicaNuevo extends JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrmTomaFisicaNuevo().setVisible(true);
+                new FrmDetalleOrdenListado().setVisible(true);
             }
         });
     }
@@ -426,16 +519,22 @@ public class FrmTomaFisicaNuevo extends JFrame {
     private javax.swing.JButton btnGrabar;
     private javax.swing.JButton btnSalir;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblCentroExpendio;
     private javax.swing.JLabel lblCodigoOrden;
     private javax.swing.JLabel lblFechaOrden;
+    private javax.swing.JLabel lblLocal;
     private javax.swing.JLabel lblLogoKodice;
     private javax.swing.JLabel lblLogoRapipercha;
+    private javax.swing.JLabel lblNombreComercial;
     private javax.swing.JLabel lblNombreEmpleado;
-    private javax.swing.JLabel lblNombreEmpresa;
+    private javax.swing.JLabel lblRazonSocial;
+    private javax.swing.JLabel lblTituloCentro;
     private javax.swing.JLabel lblTituloEmpleado;
-    private javax.swing.JLabel lblTituloEmpresa;
     private javax.swing.JLabel lblTituloFecha;
+    private javax.swing.JLabel lblTituloLocal;
+    private javax.swing.JLabel lblTituloNombreComercial;
     private javax.swing.JLabel lblTituloOrden;
+    private javax.swing.JLabel lblTituloRazonSocial;
     private javax.swing.JPanel pnlCabecera;
     private javax.swing.JPanel pnlContenedor;
     private javax.swing.JPanel pnlDetalle;

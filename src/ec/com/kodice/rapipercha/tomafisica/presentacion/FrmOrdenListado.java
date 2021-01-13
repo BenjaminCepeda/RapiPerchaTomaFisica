@@ -6,17 +6,12 @@
 
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
 
-import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
-import com.github.lgooddatepicker.optionalusertools.PickerUtilities;
-import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import ec.com.kodice.rapipercha.tomafisica.negocio.OrdenBO;
 import ec.com.kodice.rapipercha.administracion.persistencia.EmpleadoVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
-import ec.com.kodice.rapipercha.administracion.presentacion.FrmProveedorNuevo;
 import ec.com.kodice.rapipercha.util.UtilPresentacion;
 import java.time.LocalDate;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 /**
@@ -26,37 +21,36 @@ import javax.swing.JTable;
  * @version v1.0
  * @date 2020/12/06
  */
-public class FrmTomaFisicaAdministracion extends JFrame {
+public class FrmOrdenListado extends JFrame {
     private EmpleadoVO empleadoLogueado= null;
     private ProveedorVO proveedorEmpleadoLogueado = null;
 
     /** Creates new form FrmPerfilAdministracion */
-    public FrmTomaFisicaAdministracion() {
+    public FrmOrdenListado() {
         initComponents();
         dtpFecha.setDateToToday();
         cargarModelo(dtpFecha.getDate());
         this.setLocationRelativeTo(null);
     }
-    public FrmTomaFisicaAdministracion(EmpleadoVO empleadoLogueado, 
+    public FrmOrdenListado(EmpleadoVO empleadoLogueado, 
             ProveedorVO proveedorEmpleadoLoguedo) {
         this.empleadoLogueado = empleadoLogueado;
         this.proveedorEmpleadoLogueado = proveedorEmpleadoLoguedo;
         initComponents();
         dtpFecha.setDateToToday();
+        this.lblNombreEmpresa.setText(proveedorEmpleadoLogueado.getNombreComercial()
+            + " - "+ proveedorEmpleadoLogueado.getRazonSocial());
+        this.lblNombreEmpleado.setText(empleadoLogueado.getNombres() + " " +
+                empleadoLogueado.getApellidos());        
         cargarModelo(dtpFecha.getDate());
         this.setLocationRelativeTo(null);
     }
 
     private void cargarModelo(LocalDate fecha){        
-        OrdenBO ordenBO = new OrdenBO();
-        lblNombreEmpresa.setText(proveedorEmpleadoLogueado.getNombreComercial()
-            + " - "+ proveedorEmpleadoLogueado.getRazonSocial());
-        lblNombreEmpleado.setText(empleadoLogueado.getNombres() + " " +
-                empleadoLogueado.getApellidos());
-        
+        OrdenBO ordenBO = new OrdenBO();        
         try {
             tblOrdenes.setModel(ordenBO.generaModeloDatosTabla( 
-                    empleadoLogueado.getUsuario().getCodigo(), fecha,
+                empleadoLogueado.getUsuario().getCodigo(), fecha,
                 new Object[]{
                     "CODIGO", "A REALIZAR", "RAZON SOCIAL", "LOCAL", "DIRECCION",
                     "GENERADO POR", "GENERADA EN"}));
@@ -67,8 +61,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
         finally{
             ordenBO = null;   
             btnConsultar.setEnabled(false);
-            btnEditar.setEnabled(false);
-            btnBorrar.setEnabled(false);            
+            btnTomaFisica.setEnabled(false);
         }
             
     }
@@ -84,7 +77,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
         pnlContenedor = new javax.swing.JPanel();
         pnlCabecera = new javax.swing.JPanel();
         lblLogoRapipercha = new javax.swing.JLabel();
-        lblTitulo = new javax.swing.JLabel();
+        lblTituloOrden = new javax.swing.JLabel();
         lblNombreEmpleado = new javax.swing.JLabel();
         lblTituloEmpresa = new javax.swing.JLabel();
         lblNombreEmpresa = new javax.swing.JLabel();
@@ -92,15 +85,13 @@ public class FrmTomaFisicaAdministracion extends JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblOrdenes = new javax.swing.JTable();
         pnlPie = new javax.swing.JPanel();
-        btnNuevo = new javax.swing.JButton();
         btnConsultar = new javax.swing.JButton();
-        btnEditar = new javax.swing.JButton();
-        btnBorrar = new javax.swing.JButton();
+        btnTomaFisica = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         lblLogoKodice = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         dtpFecha = new com.github.lgooddatepicker.components.DatePicker();
-        btnBuscar = new javax.swing.JButton();
+        lblFecha = new javax.swing.JLabel();
+        btnMostrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -118,9 +109,9 @@ public class FrmTomaFisicaAdministracion extends JFrame {
 
         lblLogoRapipercha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/logo-rapipercha.png"))); // NOI18N
 
-        lblTitulo.setText("ORDENES ASIGNADAS A:");
-        lblTitulo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
+        lblTituloOrden.setText("ORDENES ASIGNADAS A:");
+        lblTituloOrden.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblTituloOrden.setForeground(new java.awt.Color(255, 255, 255));
 
         lblNombreEmpleado.setText("NOMBRE EMPLEADO");
         lblNombreEmpleado.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -143,14 +134,14 @@ public class FrmTomaFisicaAdministracion extends JFrame {
                 .addGap(129, 129, 129)
                 .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlCabeceraLayout.createSequentialGroup()
-                        .addComponent(lblTitulo)
+                        .addComponent(lblTituloOrden)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lblNombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlCabeceraLayout.createSequentialGroup()
                         .addComponent(lblTituloEmpresa)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblNombreEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 164, Short.MAX_VALUE))
         );
         pnlCabeceraLayout.setVerticalGroup(
             pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -165,7 +156,7 @@ public class FrmTomaFisicaAdministracion extends JFrame {
                     .addComponent(lblNombreEmpresa))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTitulo)
+                    .addComponent(lblTituloOrden)
                     .addComponent(lblNombreEmpleado))
                 .addGap(31, 31, 31))
         );
@@ -202,83 +193,48 @@ public class FrmTomaFisicaAdministracion extends JFrame {
         pnlPie.setMinimumSize(new java.awt.Dimension(0, 90));
         pnlPie.setPreferredSize(new java.awt.Dimension(780, 90));
 
-        btnNuevo.setBackground(new java.awt.Color(64, 124, 202));
-        btnNuevo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnNuevo.setForeground(new java.awt.Color(255, 255, 255));
-        btnNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Empty document new.png"))); // NOI18N
-        btnNuevo.setText("Nuevo");
-        btnNuevo.setToolTipText("");
-        btnNuevo.setAlignmentY(0.0F);
-        btnNuevo.setBorderPainted(false);
-        btnNuevo.setIconTextGap(1);
-        btnNuevo.setMaximumSize(new java.awt.Dimension(118, 55));
-        btnNuevo.setMinimumSize(new java.awt.Dimension(118, 55));
-        btnNuevo.setPreferredSize(new java.awt.Dimension(118, 55));
-        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNuevoActionPerformed(evt);
-            }
-        });
-
-        btnConsultar.setBackground(new java.awt.Color(64, 124, 202));
-        btnConsultar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnConsultar.setForeground(new java.awt.Color(255, 255, 255));
         btnConsultar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Zoom.png"))); // NOI18N
         btnConsultar.setText("Consultar");
-        btnConsultar.setToolTipText("");
         btnConsultar.setAlignmentY(0.0F);
+        btnConsultar.setBackground(new java.awt.Color(64, 124, 202));
         btnConsultar.setBorderPainted(false);
+        btnConsultar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnConsultar.setForeground(new java.awt.Color(255, 255, 255));
         btnConsultar.setIconTextGap(1);
         btnConsultar.setMaximumSize(new java.awt.Dimension(135, 55));
         btnConsultar.setMinimumSize(new java.awt.Dimension(135, 55));
         btnConsultar.setPreferredSize(new java.awt.Dimension(135, 55));
+        btnConsultar.setToolTipText("");
         btnConsultar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConsultarActionPerformed(evt);
             }
         });
 
-        btnEditar.setBackground(new java.awt.Color(64, 124, 202));
-        btnEditar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnEditar.setForeground(new java.awt.Color(255, 255, 255));
-        btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Pencil yellow.png"))); // NOI18N
-        btnEditar.setText("Editar");
-        btnEditar.setAlignmentY(0.0F);
-        btnEditar.setBorderPainted(false);
-        btnEditar.setIconTextGap(1);
-        btnEditar.setMaximumSize(new java.awt.Dimension(118, 55));
-        btnEditar.setMinimumSize(new java.awt.Dimension(118, 55));
-        btnEditar.setPreferredSize(new java.awt.Dimension(118, 55));
-        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+        btnTomaFisica.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Clipboard b.png"))); // NOI18N
+        btnTomaFisica.setText("TomaFisica");
+        btnTomaFisica.setAlignmentY(0.0F);
+        btnTomaFisica.setBackground(new java.awt.Color(64, 124, 202));
+        btnTomaFisica.setBorderPainted(false);
+        btnTomaFisica.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnTomaFisica.setForeground(new java.awt.Color(255, 255, 255));
+        btnTomaFisica.setIconTextGap(1);
+        btnTomaFisica.setMaximumSize(new java.awt.Dimension(118, 55));
+        btnTomaFisica.setMinimumSize(new java.awt.Dimension(118, 55));
+        btnTomaFisica.setPreferredSize(new java.awt.Dimension(118, 55));
+        btnTomaFisica.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditarActionPerformed(evt);
+                btnTomaFisicaActionPerformed(evt);
             }
         });
 
-        btnBorrar.setBackground(new java.awt.Color(64, 124, 202));
-        btnBorrar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnBorrar.setForeground(new java.awt.Color(255, 255, 255));
-        btnBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Badge-multiply.png"))); // NOI18N
-        btnBorrar.setText("Borrar");
-        btnBorrar.setAlignmentY(0.0F);
-        btnBorrar.setBorderPainted(false);
-        btnBorrar.setIconTextGap(1);
-        btnBorrar.setMaximumSize(new java.awt.Dimension(118, 55));
-        btnBorrar.setMinimumSize(new java.awt.Dimension(118, 55));
-        btnBorrar.setPreferredSize(new java.awt.Dimension(118, 55));
-        btnBorrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBorrarActionPerformed(evt);
-            }
-        });
-
-        btnSalir.setBackground(new java.awt.Color(64, 124, 202));
-        btnSalir.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnSalir.setForeground(new java.awt.Color(255, 255, 255));
         btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Badge-cancel.png"))); // NOI18N
         btnSalir.setText("Salir");
         btnSalir.setAlignmentY(0.0F);
+        btnSalir.setBackground(new java.awt.Color(64, 124, 202));
         btnSalir.setBorderPainted(false);
+        btnSalir.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnSalir.setForeground(new java.awt.Color(255, 255, 255));
         btnSalir.setIconTextGap(1);
         btnSalir.setMaximumSize(new java.awt.Dimension(118, 55));
         btnSalir.setMinimumSize(new java.awt.Dimension(118, 55));
@@ -300,16 +256,12 @@ public class FrmTomaFisicaAdministracion extends JFrame {
             pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPieLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnBorrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnTomaFisica, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblLogoKodice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16))
         );
@@ -320,20 +272,18 @@ public class FrmTomaFisicaAdministracion extends JFrame {
                 .addGroup(pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblLogoKodice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnBorrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnTomaFisica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
-        jLabel1.setText("Fecha a realizar:");
+        lblFecha.setText("Fecha a realizar:");
 
-        btnBuscar.setText("Buscar");
-        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+        btnMostrar.setText("Mostrar");
+        btnMostrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarActionPerformed(evt);
+                btnMostrarActionPerformed(evt);
             }
         });
 
@@ -344,24 +294,23 @@ public class FrmTomaFisicaAdministracion extends JFrame {
             .addComponent(jScrollPane1)
             .addComponent(pnlPie, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
             .addGroup(pnlDetalleLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(23, 23, 23)
+                .addComponent(lblFecha)
+                .addGap(47, 47, 47)
                 .addComponent(dtpFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnBuscar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnMostrar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlDetalleLayout.setVerticalGroup(
             pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDetalleLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(dtpFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnBuscar))
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dtpFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblFecha)
+                    .addComponent(btnMostrar))
+                .addGap(13, 13, 13)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlPie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -392,80 +341,63 @@ public class FrmTomaFisicaAdministracion extends JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlContenedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlContenedor, javax.swing.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo();
-        frmProveedorNuevo.setVisible(true);  
-        cargarModelo(dtpFecha.getDate());
-    }//GEN-LAST:event_btnNuevoActionPerformed
-
-    private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
-        String codigoElegido = "";
-        String descripcionElegido = "";
-        boolean confirmacionBorrado = false;
-        int fila = tblOrdenes.getSelectedRow();
-        if (fila >= 0) {
-            codigoElegido = tblOrdenes.getModel().getValueAt(
-                    fila, 0).toString();
-            descripcionElegido = tblOrdenes.getModel().getValueAt(fila, 1).
-                    toString() + tblOrdenes.getModel().getValueAt(fila, 2).
-                    toString();
-        }
-        if (!(codigoElegido.isEmpty() | codigoElegido.isBlank())) {
-            confirmacionBorrado = (UtilPresentacion.mostrarMensajeConfirmacion(
-                    this, "Desea eliminar el registro:\n" + codigoElegido + " - "
-                    + descripcionElegido) == JOptionPane.YES_OPTION);
-            if (confirmacionBorrado) {
-                OrdenBO ordenBO = new OrdenBO();
-                try {
-                    ordenBO.eliminar(Integer.valueOf(codigoElegido));
-                } catch (Exception e) {
-                    UtilPresentacion.mostrarMensajeError(this, e.getMessage());
-                } finally {
-                    ordenBO = null;
-                }
-            }
-            cargarModelo(dtpFecha.getDate());
-        }
-
-    }//GEN-LAST:event_btnBorrarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_btnSalirActionPerformed
 
-    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+    private void btnTomaFisicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTomaFisicaActionPerformed
         String codigoElegido = "";
+        String nombreCentroExpendio="";
+        String nombreLocal="";
         int fila = tblOrdenes.getSelectedRow();
         if (fila >= 0) {
             codigoElegido = tblOrdenes.getModel().getValueAt(
                     fila, 0).toString();
+            nombreCentroExpendio = tblOrdenes.getModel().getValueAt(
+                    fila, 2).toString();
+            nombreLocal = tblOrdenes.getModel().getValueAt(
+                    fila, 3).toString();            
         }
         if (!(codigoElegido.isEmpty() | codigoElegido.isBlank())) {
-            FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo(
-                    Integer.valueOf(codigoElegido), false);
-            frmProveedorNuevo.setVisible(true);
+            FrmDetalleOrdenListado frmDetalleOrdenListado = new 
+            FrmDetalleOrdenListado(
+                    empleadoLogueado,proveedorEmpleadoLogueado,
+                    Integer.valueOf(codigoElegido), 
+                    nombreCentroExpendio, nombreLocal,
+                    false);
+            frmDetalleOrdenListado.setVisible(true);
             cargarModelo(dtpFecha.getDate());
         }
-    }//GEN-LAST:event_btnEditarActionPerformed
+    }//GEN-LAST:event_btnTomaFisicaActionPerformed
 
     private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
         String codigoElegido = "";
+        String nombreCentroExpendio="";
+        String nombreLocal="";
         int fila = tblOrdenes.getSelectedRow();
         if (fila >= 0) {
             codigoElegido = tblOrdenes.getModel().getValueAt(
-                fila, 0).toString();
+                    fila, 0).toString();
+            nombreCentroExpendio = tblOrdenes.getModel().getValueAt(
+                    fila, 2).toString();
+            nombreLocal = tblOrdenes.getModel().getValueAt(
+                    fila, 3).toString();            
         }
         if (!(codigoElegido.isEmpty() | codigoElegido.isBlank())) {
-            FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo(
-                Integer.valueOf(codigoElegido), true);
-            frmProveedorNuevo.setVisible(true);
+            FrmDetalleOrdenListado frmDetalleOrdenListado = new 
+            FrmDetalleOrdenListado(
+                empleadoLogueado,proveedorEmpleadoLogueado,
+                Integer.valueOf(codigoElegido), 
+                nombreCentroExpendio, nombreLocal,
+                true);
+            frmDetalleOrdenListado.setVisible(true);
             cargarModelo(dtpFecha.getDate());
         }
     }//GEN-LAST:event_btnConsultarActionPerformed
@@ -473,27 +405,35 @@ public class FrmTomaFisicaAdministracion extends JFrame {
     private void tblOrdenesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblOrdenesMousePressed
         JTable source = (JTable) evt.getSource();
         String codigoElegido = "";
+        String nombreCentroExpendio="";
+        String nombreLocal="";
         int fila = source.rowAtPoint(evt.getPoint());
         //int column = source.columnAtPoint(evt.getPoint());
         if (fila >= 0) {
             codigoElegido = tblOrdenes.getModel().getValueAt(
                     fila, 0).toString();
+            nombreCentroExpendio = tblOrdenes.getModel().getValueAt(
+                    fila, 2).toString();
+            nombreLocal = tblOrdenes.getModel().getValueAt(
+                    fila, 3).toString();            
             btnConsultar.setEnabled(true);
-            btnEditar.setEnabled(true);
-            btnBorrar.setEnabled(true);
+            btnTomaFisica.setEnabled(true);
             if (evt.getClickCount() == 2 && !codigoElegido.isEmpty() && !codigoElegido.isBlank()) {
-                FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo(
-                        Integer.valueOf(codigoElegido),true);
-                frmProveedorNuevo.setVisible(true);
+                FrmDetalleOrdenListado frmDetalleOrdenListado = new 
+                FrmDetalleOrdenListado(
+                    empleadoLogueado,proveedorEmpleadoLogueado,
+                    Integer.valueOf(codigoElegido),
+                    nombreCentroExpendio, nombreLocal,
+                    true);
+                frmDetalleOrdenListado.setVisible(true);
                 cargarModelo(dtpFecha.getDate());
             }
         }
     }//GEN-LAST:event_tblOrdenesMousePressed
 
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-
+    private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarActionPerformed
         cargarModelo(dtpFecha.getDate());
-    }//GEN-LAST:event_btnBuscarActionPerformed
+    }//GEN-LAST:event_btnMostrarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -512,14 +452,26 @@ public class FrmTomaFisicaAdministracion extends JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmTomaFisicaAdministracion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmOrdenListado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmTomaFisicaAdministracion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmOrdenListado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmTomaFisicaAdministracion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmOrdenListado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmTomaFisicaAdministracion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmOrdenListado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -528,27 +480,25 @@ public class FrmTomaFisicaAdministracion extends JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrmTomaFisicaAdministracion().setVisible(true);
+                new FrmOrdenListado().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBorrar;
-    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnConsultar;
-    private javax.swing.JButton btnEditar;
-    private javax.swing.JButton btnNuevo;
+    private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnSalir;
+    private javax.swing.JButton btnTomaFisica;
     private com.github.lgooddatepicker.components.DatePicker dtpFecha;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblFecha;
     private javax.swing.JLabel lblLogoKodice;
     private javax.swing.JLabel lblLogoRapipercha;
     private javax.swing.JLabel lblNombreEmpleado;
     private javax.swing.JLabel lblNombreEmpresa;
-    private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblTituloEmpresa;
+    private javax.swing.JLabel lblTituloOrden;
     private javax.swing.JPanel pnlCabecera;
     private javax.swing.JPanel pnlContenedor;
     private javax.swing.JPanel pnlDetalle;
