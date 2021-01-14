@@ -29,6 +29,7 @@ public class FrmDetalleOrdenListado extends JFrame {
     private EmpleadoVO empleadoLogueado= null;
     private ProveedorVO proveedorEmpleadoLogueado = null;
     private int codigoOrdenActual = 0;
+    
 
     /** Creates new form FrmPerfilAdministracion */
     public FrmDetalleOrdenListado() {
@@ -43,6 +44,7 @@ public class FrmDetalleOrdenListado extends JFrame {
         this.proveedorEmpleadoLogueado = proveedorEmpleadoLoguedo;
         this.codigoOrdenActual = codigoOrdenActual;
         initComponents();
+                
         OrdenBO ordenBO = new OrdenBO();
         OrdenVO ordenVO = new OrdenVO();
         lblRazonSocial.setText(proveedorEmpleadoLogueado.getRazonSocial());
@@ -66,6 +68,7 @@ public class FrmDetalleOrdenListado extends JFrame {
         cargarModelo();
         this.setLocationRelativeTo(null);
     }
+ 
 
     private void cargarModelo(){        
         DetalleOrdenBO detalleOrdenBO = new DetalleOrdenBO();        
@@ -80,7 +83,9 @@ public class FrmDetalleOrdenListado extends JFrame {
             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
         }
         finally{
-            detalleOrdenBO = null;   
+            detalleOrdenBO = null; 
+            btnRegistrar.setEnabled(false);
+            
         }
             
     }
@@ -114,7 +119,7 @@ public class FrmDetalleOrdenListado extends JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDetalleOrden = new javax.swing.JTable();
         pnlPie = new javax.swing.JPanel();
-        btnGrabar = new javax.swing.JButton();
+        btnRegistrar = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         lblLogoKodice = new javax.swing.JLabel();
 
@@ -279,25 +284,20 @@ public class FrmDetalleOrdenListado extends JFrame {
 
         pnlDetalle.setAlignmentX(0.0F);
         pnlDetalle.setAlignmentY(0.0F);
+        pnlDetalle.setFont(new java.awt.Font("Tahoma", 0, 8)); // NOI18N
 
+        tblDetalleOrden.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         tblDetalleOrden.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Codigo", "Nombre"
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tblDetalleOrden.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tblDetalleOrden.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        ));
         tblDetalleOrden.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblDetalleOrdenMousePressed(evt);
@@ -305,35 +305,48 @@ public class FrmDetalleOrdenListado extends JFrame {
         });
         jScrollPane1.setViewportView(tblDetalleOrden);
 
+        javax.swing.GroupLayout pnlDetalleLayout = new javax.swing.GroupLayout(pnlDetalle);
+        pnlDetalle.setLayout(pnlDetalleLayout);
+        pnlDetalleLayout.setHorizontalGroup(
+            pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1)
+        );
+        pnlDetalleLayout.setVerticalGroup(
+            pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlDetalleLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         pnlPie.setMaximumSize(new java.awt.Dimension(32767, 90));
         pnlPie.setMinimumSize(new java.awt.Dimension(0, 90));
         pnlPie.setPreferredSize(new java.awt.Dimension(780, 90));
 
-        btnGrabar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Empty document new.png"))); // NOI18N
-        btnGrabar.setText("Nuevo");
-        btnGrabar.setAlignmentY(0.0F);
-        btnGrabar.setBackground(new java.awt.Color(64, 124, 202));
-        btnGrabar.setBorderPainted(false);
-        btnGrabar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnGrabar.setForeground(new java.awt.Color(255, 255, 255));
-        btnGrabar.setIconTextGap(1);
-        btnGrabar.setMaximumSize(new java.awt.Dimension(118, 55));
-        btnGrabar.setMinimumSize(new java.awt.Dimension(118, 55));
-        btnGrabar.setPreferredSize(new java.awt.Dimension(118, 55));
-        btnGrabar.setToolTipText("");
-        btnGrabar.addActionListener(new java.awt.event.ActionListener() {
+        btnRegistrar.setBackground(new java.awt.Color(64, 124, 202));
+        btnRegistrar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
+        btnRegistrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Applications.png"))); // NOI18N
+        btnRegistrar.setText("Registrar");
+        btnRegistrar.setToolTipText("");
+        btnRegistrar.setAlignmentY(0.0F);
+        btnRegistrar.setBorderPainted(false);
+        btnRegistrar.setIconTextGap(1);
+        btnRegistrar.setMaximumSize(new java.awt.Dimension(118, 55));
+        btnRegistrar.setMinimumSize(new java.awt.Dimension(118, 55));
+        btnRegistrar.setPreferredSize(new java.awt.Dimension(118, 55));
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGrabarActionPerformed(evt);
+                btnRegistrarActionPerformed(evt);
             }
         });
 
+        btnSalir.setBackground(new java.awt.Color(64, 124, 202));
+        btnSalir.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnSalir.setForeground(new java.awt.Color(255, 255, 255));
         btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Badge-cancel.png"))); // NOI18N
         btnSalir.setText("Salir");
         btnSalir.setAlignmentY(0.0F);
-        btnSalir.setBackground(new java.awt.Color(64, 124, 202));
         btnSalir.setBorderPainted(false);
-        btnSalir.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnSalir.setForeground(new java.awt.Color(255, 255, 255));
         btnSalir.setIconTextGap(1);
         btnSalir.setMaximumSize(new java.awt.Dimension(118, 55));
         btnSalir.setMinimumSize(new java.awt.Dimension(118, 55));
@@ -355,7 +368,7 @@ public class FrmDetalleOrdenListado extends JFrame {
             pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPieLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnGrabar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -369,26 +382,9 @@ public class FrmDetalleOrdenListado extends JFrame {
                 .addGroup(pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblLogoKodice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnGrabar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(24, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout pnlDetalleLayout = new javax.swing.GroupLayout(pnlDetalle);
-        pnlDetalle.setLayout(pnlDetalleLayout);
-        pnlDetalleLayout.setHorizontalGroup(
-            pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-            .addComponent(pnlPie, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
-        );
-        pnlDetalleLayout.setVerticalGroup(
-            pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlDetalleLayout.createSequentialGroup()
-                .addGap(45, 45, 45)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlPie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout pnlContenedorLayout = new javax.swing.GroupLayout(pnlContenedor);
@@ -397,6 +393,7 @@ public class FrmDetalleOrdenListado extends JFrame {
             pnlContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnlCabecera, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
             .addComponent(pnlDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlPie, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
         );
         pnlContenedorLayout.setVerticalGroup(
             pnlContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -404,7 +401,8 @@ public class FrmDetalleOrdenListado extends JFrame {
                 .addComponent(pnlCabecera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnlPie, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -415,17 +413,17 @@ public class FrmDetalleOrdenListado extends JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlContenedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlContenedor, javax.swing.GroupLayout.PREFERRED_SIZE, 692, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnGrabarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGrabarActionPerformed
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
         FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo();
         frmProveedorNuevo.setVisible(true);  
         cargarModelo();
-    }//GEN-LAST:event_btnGrabarActionPerformed
+    }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         this.setVisible(false);
@@ -440,6 +438,7 @@ public class FrmDetalleOrdenListado extends JFrame {
         if (fila >= 0) {
             codigoElegido = tblDetalleOrden.getModel().getValueAt(
                     fila, 0).toString();
+            btnRegistrar.setEnabled(true);
             if (evt.getClickCount() == 2 && !codigoElegido.isEmpty() && !codigoElegido.isBlank()) {
                 FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo(
                         Integer.valueOf(codigoElegido),true);
@@ -447,6 +446,7 @@ public class FrmDetalleOrdenListado extends JFrame {
                 cargarModelo();
             }
         }
+
     }//GEN-LAST:event_tblDetalleOrdenMousePressed
 
     /**
@@ -516,7 +516,7 @@ public class FrmDetalleOrdenListado extends JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnGrabar;
+    private javax.swing.JButton btnRegistrar;
     private javax.swing.JButton btnSalir;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCentroExpendio;
