@@ -84,17 +84,32 @@ public class DetalleOrdenBO {
         return (filasAfectadas);
     }
 
+    public int registrarTomaFisica(DetalleOrdenVO detalleOrdenVO) throws Exception {
+        int filasAfectadas = 0;
+        try {
+            filasAfectadas = detalleOrdenDAO.registrarTomaFisica(detalleOrdenVO);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage()
+                    + "\n[" + this.getClass().getName() + "]");
+        }
+        return (filasAfectadas);
+    }
+
     public DefaultTableModel generaModeloDatosTabla(int ordenCodigo,
             Object[] titulosCabecera) 
             throws Exception {
         DefaultTableModel dtmListaElementos = new DefaultTableModel();
         List<DetalleOrdenVO> listaElementos = null;      
+        String fechaProceso="";
         dtmListaElementos.setColumnIdentifiers(titulosCabecera);
         try {
             listaElementos = detalleOrdenDAO.buscarPorOrden(
                     ordenCodigo);
             if (listaElementos != null) {
                 for (DetalleOrdenVO detalleOrdenVO : listaElementos) {
+                   if (detalleOrdenVO.getFechaProceso()!=null)
+                       fechaProceso = detalleOrdenVO.getFechaProceso().
+                               toString();                           
                    dtmListaElementos.addRow(new Object[]{
                       detalleOrdenVO.getCodigo(), 
                       detalleOrdenVO.getProducto().getDescripcion(),
@@ -103,7 +118,8 @@ public class DetalleOrdenBO {
                       detalleOrdenVO.getExistencia(),                    
                       detalleOrdenVO.getCantidadRevisada(),
                       detalleOrdenVO.getCantidadMalEstado(),
-                      detalleOrdenVO.getCantidadVencido()});
+                      detalleOrdenVO.getCantidadVencido(),
+                      fechaProceso});
                 }
             }
         } catch (Exception e) {

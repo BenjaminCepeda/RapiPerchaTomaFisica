@@ -6,11 +6,9 @@
 
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
 
-import ec.com.kodice.rapipercha.administracion.persistencia.CentroExpendioVO;
 import ec.com.kodice.rapipercha.tomafisica.negocio.OrdenBO;
 import ec.com.kodice.rapipercha.administracion.persistencia.EmpleadoVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
-import ec.com.kodice.rapipercha.administracion.presentacion.FrmProveedorNuevo;
 import ec.com.kodice.rapipercha.tomafisica.negocio.DetalleOrdenBO;
 import ec.com.kodice.rapipercha.tomafisica.persistencia.OrdenVO;
 import ec.com.kodice.rapipercha.util.UtilPresentacion;
@@ -20,18 +18,16 @@ import javax.swing.JTable;
 
 /**
  *
- * Esta clase contiene atributos y métodos del formulario FrmPerfilAdministracion
+ * Esta clase contiene atributos y métodos del Detalle de Orden
  * @author Benjamin Cepeda
  * @version v1.0
- * @date 2020/12/06
+ * @date 2021/01/18
  */
 public class FrmDetalleOrdenListado extends JFrame {
     private EmpleadoVO empleadoLogueado= null;
     private ProveedorVO proveedorEmpleadoLogueado = null;
     private int codigoOrdenActual = 0;
     
-
-    /** Creates new form FrmPerfilAdministracion */
     public FrmDetalleOrdenListado() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -77,7 +73,7 @@ public class FrmDetalleOrdenListado extends JFrame {
                     this.codigoOrdenActual,
                     new Object[]{
                     "CODIGO", "PRODUCTO", "CODIGO EXTERNO", "MINIMO", "EXIST.",
-                    "CANT. REV.", "CANT.MAL", "CANT.VENC."}));
+                    "CANT. REV.", "CANT.MAL", "CANT.VENC.", "PROCESADO"}));
         }
         catch ( Exception e) {
             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
@@ -420,9 +416,18 @@ public class FrmDetalleOrdenListado extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo();
-        frmProveedorNuevo.setVisible(true);  
-        cargarModelo();
+        String codigoElegido = "";
+        int fila = tblDetalleOrden.getSelectedRow();
+        if (fila >= 0) {
+            codigoElegido = tblDetalleOrden.getModel().getValueAt(
+                    fila, 0).toString();
+        }
+        if (!(codigoElegido.isEmpty() | codigoElegido.isBlank())) {
+            FrmRegistroTomaFisica frmRegistroTomaFisica = 
+                new FrmRegistroTomaFisica(Integer.valueOf(codigoElegido), false);
+            frmRegistroTomaFisica.setVisible(true);  
+            cargarModelo();
+        }
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
@@ -440,9 +445,9 @@ public class FrmDetalleOrdenListado extends JFrame {
                     fila, 0).toString();
             btnRegistrar.setEnabled(true);
             if (evt.getClickCount() == 2 && !codigoElegido.isEmpty() && !codigoElegido.isBlank()) {
-                FrmProveedorNuevo frmProveedorNuevo = new FrmProveedorNuevo(
-                        Integer.valueOf(codigoElegido),true);
-                frmProveedorNuevo.setVisible(true);
+                FrmRegistroTomaFisica frmRegistroTomaFisica = new FrmRegistroTomaFisica(
+                        Integer.valueOf(codigoElegido),false);
+                frmRegistroTomaFisica.setVisible(true);
                 cargarModelo();
             }
         }

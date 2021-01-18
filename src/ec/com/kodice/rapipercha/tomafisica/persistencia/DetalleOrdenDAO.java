@@ -84,17 +84,26 @@ public class DetalleOrdenDAO {
         Connection conexion = null;
         PreparedStatement sentencia = null;
         DetalleOrdenVO detalleOrdenVO = null;
+        LocalDateTime fechaProceso=null;
         try {
             conexion = CustomConnection.getConnection();
-            String consulta = "SELECT det_codigo, ord_codigo, prod_codigo, "
+            String consulta = "SELECT det_codigo, ord_codigo, p.prod_codigo, "
                     + "det_cantidad_minima,  det_existencia, "
                     + "det_cantidad_revisada, det_cantidad_mal_estado,"
-                    + "det_cantidad_vencido, det_fecha_proceso "
-                    + "FROM TDETALLE_ORDENES WHERE det_codigo = ?";
+                    + "det_cantidad_vencido, det_fecha_proceso, "
+                    + "p.prod_descripcion, "
+                    + "p.prod_codigo_externo_producto "
+                    + "FROM TDETALLE_ORDENES  "
+                    + "INNER JOIN TPRODUCTOS P ON "
+                    + "TDETALLE_ORDENES.prod_codigo = P.prod_codigo "
+                    + "WHERE det_codigo = ?";
             sentencia = conexion.prepareStatement(consulta);
             sentencia.setInt(1, codigo);
             ResultSet resultado = sentencia.executeQuery();
             while (resultado.next()) {
+                if (resultado.getTimestamp("det_fecha_proceso")!=null)
+                    fechaProceso = resultado.getTimestamp("det_fecha_proceso").
+                            toLocalDateTime();
                 detalleOrdenVO = new DetalleOrdenVO(
                         resultado.getInt("det_codigo"),
                         resultado.getInt("ord_codigo"),
@@ -104,8 +113,11 @@ public class DetalleOrdenDAO {
                         resultado.getFloat("det_cantidad_revisada"),
                         resultado.getFloat("det_cantidad_mal_estado"),
                         resultado.getFloat("det_cantidad_vencido"),
-                        resultado.getTimestamp("det_fecha_proceso").
-                                toLocalDateTime());
+                        fechaProceso);
+                detalleOrdenVO.getProducto().setDescripcion(
+                        resultado.getString("prod_descripcion"));
+                detalleOrdenVO.getProducto().setCodigoExternoProducto(
+                        resultado.getString("prod_codigo_externo_producto"));
             }
         } 
         catch(Exception e){
@@ -135,6 +147,7 @@ public class DetalleOrdenDAO {
         PreparedStatement sentencia = null;
         List<DetalleOrdenVO> listaElementos = null;
         DetalleOrdenVO detalleOrdenVO = null;
+        LocalDateTime fechaProceso=null;
         try {
             conexion = CustomConnection.getConnection();
             String consulta = "SELECT det_codigo, ord_codigo, prod_codigo, "
@@ -148,18 +161,20 @@ public class DetalleOrdenDAO {
                 if (listaElementos == null) {
                     listaElementos = new ArrayList<DetalleOrdenVO>();
                 }
+                if (resultado.getTimestamp("det_fecha_proceso")!=null)
+                    fechaProceso = resultado.getTimestamp("det_fecha_proceso").
+                            toLocalDateTime();
                 detalleOrdenVO = new DetalleOrdenVO(
-                        resultado.getInt("det_codigo"),
-                        resultado.getInt("ord_codigo"),
-                        resultado.getInt("prod_codigo"),
-                        resultado.getFloat("det_cantidad_minima"),
-                        resultado.getFloat("det_existencia"),
-                        resultado.getFloat("det_cantidad_revisada"),
-                        resultado.getFloat("det_cantidad_mal_estado"),
-                        resultado.getFloat("det_cantidad_vencido"),
-                        resultado.getTimestamp("det_fecha_proceso").
-                                toLocalDateTime());
-                listaElementos.add(detalleOrdenVO);
+                    resultado.getInt("det_codigo"),
+                    resultado.getInt("ord_codigo"),
+                    resultado.getInt("prod_codigo"),
+                    resultado.getFloat("det_cantidad_minima"),
+                    resultado.getFloat("det_existencia"),
+                    resultado.getFloat("det_cantidad_revisada"),
+                    resultado.getFloat("det_cantidad_mal_estado"),
+                    resultado.getFloat("det_cantidad_vencido"),
+                    fechaProceso);
+                    listaElementos.add(detalleOrdenVO);
             }
         } 
         catch(Exception e){
@@ -265,20 +280,17 @@ public class DetalleOrdenDAO {
                     + "prod_codigo = ?, "
                     + "det_cantidad_minima= ?, "
                     + "det_existencia= ?, "
-                    + "det_cantidad_revisada= ?, "
-                    + "det_cantidad_mal_estado= ?, "
-                    + "det_cantidad_vencido= ? "
-                    + "det_fecha_proceso= NOW() "
+                    + "det_cantidad_revisada= 0, "
+                    + "det_cantidad_mal_estado= 0, "
+                    + "det_cantidad_vencido= 0 "
+                    + "det_fecha_proceso= NULL "
                     + "WHERE det_codigo = ?";
             sentencia = conexion.prepareStatement(consulta);
             sentencia.setInt(1, detalleOrdenVO.getOrdenCodigo());
             sentencia.setInt(2, detalleOrdenVO.getProducto().getCodigo());
             sentencia.setFloat(3, detalleOrdenVO.getCantidadMinima());
             sentencia.setFloat(4, detalleOrdenVO.getExistencia());
-            sentencia.setFloat(5, detalleOrdenVO.getCantidadRevisada());
-            sentencia.setFloat(6, detalleOrdenVO.getCantidadMalEstado());
-            sentencia.setFloat(7, detalleOrdenVO.getCantidadVencido());
-            sentencia.setFloat(8, detalleOrdenVO.getCodigo());
+            sentencia.setFloat(5, detalleOrdenVO.getCodigo());
             filasAfectadas = sentencia.executeUpdate();
         } 
         catch(Exception e){
@@ -316,6 +328,49 @@ public class DetalleOrdenDAO {
             sentencia.setInt(1, codigo);
             filasAfectadas = sentencia.executeUpdate();
             conexion.close();
+        } 
+        catch(Exception e){
+            conexion.close();
+            throw new Exception(e.getMessage() + "\n[" + this.getClass().getName()
+                    + "] ");
+        }    
+        finally{
+            try {
+                conexion.close();
+            } catch (SQLException e){
+                throw new Exception(e.getMessage() + "\n[" 
+                        + this.getClass().getName() + "] ");
+            }
+        }        
+        return (filasAfectadas);
+    }
+    
+    /**
+     * Permite registrar la toma fisica de un detalle de la Orden
+     *
+     * @param detalleOrdenVO POJO con los atributos de Detalle de Orden
+     * @return Numero de registros actualizados
+     * @throws Exception
+     */
+    public int registrarTomaFisica(DetalleOrdenVO detalleOrdenVO) throws Exception {
+        Connection conexion = null;
+        PreparedStatement sentencia = null;
+        int filasAfectadas = 0;
+        try {
+            conexion = CustomConnection.getConnection();
+            String consulta = "UPDATE TDETALLE_ORDENES "
+                    + "SET "
+                    + "det_cantidad_revisada= ?, "
+                    + "det_cantidad_mal_estado= ?, "
+                    + "det_cantidad_vencido= ?, "
+                    + "det_fecha_proceso= NOW() "
+                    + "WHERE det_codigo = ?";
+            sentencia = conexion.prepareStatement(consulta);
+            sentencia.setFloat(1, detalleOrdenVO.getCantidadRevisada());
+            sentencia.setFloat(2, detalleOrdenVO.getCantidadMalEstado());
+            sentencia.setFloat(3, detalleOrdenVO.getCantidadVencido());
+            sentencia.setInt(4, detalleOrdenVO.getCodigo());
+            filasAfectadas = sentencia.executeUpdate();
         } 
         catch(Exception e){
             conexion.close();
