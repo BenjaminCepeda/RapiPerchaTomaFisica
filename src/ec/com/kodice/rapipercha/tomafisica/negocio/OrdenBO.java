@@ -99,12 +99,14 @@ public class OrdenBO {
                 for (OrdenVO ordenVO : listaElementos) {
                     usuarioGeneroOrden = usuarioBO.buscar(ordenVO.getCodigo());
                     dtmListaElementos.addRow(new Object[]{
-                        ordenVO.getCodigo(), ordenVO.getFechaARealizar(),
+                      ordenVO.getCodigo(), ordenVO.getFechaARealizar(),
                       ordenVO.getLocalVO().getCentroExpendioVO().getRazonSocial(),
                       ordenVO.getLocalVO().getNombre(),
                       ordenVO.getLocalVO().getDireccion(),
                       usuarioGeneroOrden.getNombre(),
-                      ordenVO.getFechaGeneracion()});
+                      ordenVO.getFechaGeneracion(),
+                      ordenVO.getEstado()});
+                   
                 }
             }
         } catch (Exception e) {
