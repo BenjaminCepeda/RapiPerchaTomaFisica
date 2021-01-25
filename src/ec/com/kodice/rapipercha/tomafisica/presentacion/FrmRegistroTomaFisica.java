@@ -5,12 +5,13 @@
  */
 
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
-import ec.com.kodice.rapipercha.administracion.negocio.ProveedorBO;
-import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
 import ec.com.kodice.rapipercha.tomafisica.negocio.DetalleOrdenBO;
 import ec.com.kodice.rapipercha.tomafisica.persistencia.DetalleOrdenVO;
 import ec.com.kodice.rapipercha.util.UtilPresentacion;
+import java.text.DecimalFormat;
 import javax.swing.JOptionPane;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -35,12 +36,25 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
         cargarDatos();
     }
     
+    public DefaultFormatterFactory factoryFlotantes(){
+        NumberFormatter formatter = new NumberFormatter(
+                new DecimalFormat("###0.00"));
+        formatter.setValueClass(Float.class);
+        formatter.setAllowsInvalid(false);
+        // Si quieres comprobar que sea válido, cada vez que se pulse una tecla
+        formatter.setCommitsOnValidEdit(true);
+        DefaultFormatterFactory factory = new DefaultFormatterFactory(formatter);
+        return(factory);
+    }
+    
     public FrmRegistroTomaFisica() {
         initComponents();
+        //txtCantidadRevisada.setFormatterFactory(factoryFlotantes());
         this.setLocationRelativeTo(null);
         this.codigoActual = 0;
         cargarDatos();
-    }
+    }    
+   
     private void seteaControles(boolean soloLectura){
         btnGrabar.setEnabled(!soloLectura);
     }
@@ -99,13 +113,13 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
         lblExistencia = new javax.swing.JLabel();
         txtExistencia = new javax.swing.JTextField();
         lblCantidadRevisada = new javax.swing.JLabel();
-        txtCantidadRevisada = new javax.swing.JTextField();
         lblCantidadMalEstado = new javax.swing.JLabel();
-        txtCantidadMalEstado = new javax.swing.JTextField();
         lblCantidadVencido = new javax.swing.JLabel();
-        txtCantidadVencido = new javax.swing.JTextField();
         lblFechaProceso = new javax.swing.JLabel();
         txtFechaProceso = new javax.swing.JTextField();
+        txtCantidadRevisada = new javax.swing.JFormattedTextField();
+        txtCantidadMalEstado = new javax.swing.JFormattedTextField();
+        txtCantidadVencido = new javax.swing.JFormattedTextField();
         pnlPie = new javax.swing.JPanel();
         btnGrabar = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
@@ -196,20 +210,11 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
         lblCantidadRevisada.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblCantidadRevisada.setText("Cantidad Revisada:");
 
-        txtCantidadRevisada.setMinimumSize(new java.awt.Dimension(7, 22));
-        txtCantidadRevisada.setPreferredSize(new java.awt.Dimension(7, 22));
-
         lblCantidadMalEstado.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblCantidadMalEstado.setText("Cantidad Mal Estado:");
 
-        txtCantidadMalEstado.setMinimumSize(new java.awt.Dimension(7, 22));
-        txtCantidadMalEstado.setPreferredSize(new java.awt.Dimension(7, 22));
-
         lblCantidadVencido.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblCantidadVencido.setText("Cantidad Vencido:");
-
-        txtCantidadVencido.setMinimumSize(new java.awt.Dimension(7, 22));
-        txtCantidadVencido.setPreferredSize(new java.awt.Dimension(7, 22));
 
         lblFechaProceso.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblFechaProceso.setText("Fecha proceso:");
@@ -217,6 +222,12 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
         txtFechaProceso.setEnabled(false);
         txtFechaProceso.setMinimumSize(new java.awt.Dimension(7, 22));
         txtFechaProceso.setPreferredSize(new java.awt.Dimension(7, 22));
+
+        txtCantidadRevisada.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
+
+        txtCantidadMalEstado.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
+
+        txtCantidadVencido.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
 
         javax.swing.GroupLayout pnlDetalleLayout = new javax.swing.GroupLayout(pnlDetalle);
         pnlDetalle.setLayout(pnlDetalleLayout);
@@ -247,28 +258,28 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
                             .addComponent(lblCantidadMinima)
                             .addComponent(lblExistencia))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCantidadMinima, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtExistencia, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCantidadRevisada, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDetalleLayout.createSequentialGroup()
-                            .addComponent(lblFechaProceso)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(txtFechaProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(pnlDetalleLayout.createSequentialGroup()
-                            .addComponent(lblCantidadVencido)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(txtCantidadVencido, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtCantidadMinima, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
+                            .addComponent(txtExistencia, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
+                            .addComponent(txtCantidadRevisada)))
+                    .addGroup(pnlDetalleLayout.createSequentialGroup()
+                        .addComponent(lblCantidadVencido)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtCantidadVencido, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlDetalleLayout.createSequentialGroup()
+                        .addComponent(lblFechaProceso)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtFechaProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
         pnlDetalleLayout.setVerticalGroup(
             pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDetalleLayout.createSequentialGroup()
+                .addGap(5, 5, 5)
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblOrdenCodigo)
                     .addComponent(txtOrdenCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblCodigo)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -285,23 +296,29 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblExistencia)
                     .addComponent(txtExistencia, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlDetalleLayout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(lblCantidadRevisada))
+                    .addGroup(pnlDetalleLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCantidadRevisada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblCantidadRevisada)
-                    .addComponent(txtCantidadRevisada, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlDetalleLayout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(lblCantidadMalEstado)
+                        .addGap(1, 1, 1))
+                    .addComponent(txtCantidadMalEstado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblCantidadMalEstado)
-                    .addComponent(txtCantidadMalEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblCantidadVencido)
-                    .addComponent(txtCantidadVencido, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCantidadVencido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCantidadVencido))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtFechaProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblFechaProceso))
-                .addGap(0, 13, Short.MAX_VALUE))
+                .addGap(0, 9, Short.MAX_VALUE))
         );
 
         pnlPie.setMaximumSize(new java.awt.Dimension(32767, 90));
@@ -377,7 +394,7 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
                 .addComponent(pnlCabecera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(pnlPie, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -527,10 +544,10 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
     private javax.swing.JPanel pnlContenedor;
     private javax.swing.JPanel pnlDetalle;
     private javax.swing.JPanel pnlPie;
-    private javax.swing.JTextField txtCantidadMalEstado;
+    private javax.swing.JFormattedTextField txtCantidadMalEstado;
     private javax.swing.JTextField txtCantidadMinima;
-    private javax.swing.JTextField txtCantidadRevisada;
-    private javax.swing.JTextField txtCantidadVencido;
+    private javax.swing.JFormattedTextField txtCantidadRevisada;
+    private javax.swing.JFormattedTextField txtCantidadVencido;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtExistencia;
     private javax.swing.JTextField txtFechaProceso;
