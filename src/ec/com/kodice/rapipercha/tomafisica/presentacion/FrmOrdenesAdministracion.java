@@ -43,7 +43,7 @@ public class FrmOrdenesAdministracion extends javax.swing.JFrame {
         this.lblNombreEmpleado1.setText(empleadoLogueado.getNombres() + " " +
                 empleadoLogueado.getApellidos());       
         
-        
+        dtpFecha.setDateToToday();
         cargarTabla(dtpFecha.getDate());
         this.setLocationRelativeTo(null);
         this.setVisible(true);
@@ -58,7 +58,7 @@ public class FrmOrdenesAdministracion extends javax.swing.JFrame {
         OrdenBO ordenBo = new OrdenBO();
         try {
             tblOrdenes.setModel(ordenBo.generaModeloDatosTabla(empleadoLogueado.getCodigo(),
-                    LocalDate.now(), 
+                    dtpFecha.getDate(), 
                     new Object[]{"CODIGO", "FECHA A REALIZAR", "C.EXPENDIO",
                         "LOCAL","DIRECCIÓN","GENERADO POR","GENERADO EN","ESTADO"}));
         } catch (Exception e) {

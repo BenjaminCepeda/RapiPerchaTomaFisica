@@ -6,15 +6,13 @@
 
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
 
-import ec.com.kodice.rapipercha.administracion.negocio.PerfilBO;
-import ec.com.kodice.rapipercha.administracion.negocio.UsuarioBO;
+import ec.com.kodice.rapipercha.administracion.negocio.CentrodeExpendioBO;
 import ec.com.kodice.rapipercha.administracion.negocio.EmpleadoBO;
+import ec.com.kodice.rapipercha.administracion.negocio.LocalBO;
+import ec.com.kodice.rapipercha.administracion.persistencia.CentroExpendioVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.EmpleadoVO;
-import ec.com.kodice.rapipercha.administracion.persistencia.PerfilVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
-import ec.com.kodice.rapipercha.administracion.persistencia.UsuarioVO;
 import ec.com.kodice.rapipercha.util.UtilPresentacion;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -59,10 +57,21 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
     }
     private void cargarDatos(){
               
-        EmpleadoBO empleadoBO = null;
-     //   EmpleadoBO empleadoBO = new EmpleadoBO();
+        EmpleadoBO empleadoBO = new EmpleadoBO();
+        CentrodeExpendioBO centrodeexpendioBO=new CentrodeExpendioBO();
+        try {
+            cmbEmpleado.setModel(empleadoBO.generaModeloDatosCombo(proveedorEmpleadoLogueado.getCodigo()));
+            cmbCentroExpendio.setModel(centrodeexpendioBO.generaModeloDatosCombo(proveedorEmpleadoLogueado.getCodigo()));
+        } catch (Exception e) {
+            
+             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+        }
+        finally{
+            empleadoBO = null;   
+            centrodeexpendioBO=null;
+        }
         
-     //   cmbUsuario.setModel(empleadoBO.generaModeloDatosEstados());
+        
         
         
         
@@ -115,14 +124,14 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         lblCodigo = new javax.swing.JLabel();
         txtCodigo = new javax.swing.JTextField();
         lblPerfil = new javax.swing.JLabel();
-        cmbPerfil = new javax.swing.JComboBox<>();
+        cmbCentroExpendio = new javax.swing.JComboBox<>();
         lblEstado = new javax.swing.JLabel();
-        cmbEstado = new javax.swing.JComboBox<>();
+        cmbLocales = new javax.swing.JComboBox<>();
         pnlDetalle3 = new javax.swing.JPanel();
         lblCodigo3 = new javax.swing.JLabel();
         txtCodigo3 = new javax.swing.JTextField();
         lblPerfil3 = new javax.swing.JLabel();
-        cmbUsuario = new javax.swing.JComboBox<>();
+        cmbEmpleado = new javax.swing.JComboBox<>();
         lblCodigo4 = new javax.swing.JLabel();
         txtCodigo4 = new javax.swing.JTextField();
         lblCodigo5 = new javax.swing.JLabel();
@@ -459,15 +468,26 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         lblPerfil.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblPerfil.setText("Centro de Expendio");
 
-        cmbPerfil.setMinimumSize(new java.awt.Dimension(30, 25));
-        cmbPerfil.addActionListener(new java.awt.event.ActionListener() {
+        cmbCentroExpendio.setMinimumSize(new java.awt.Dimension(30, 25));
+        cmbCentroExpendio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cmbCentroExpendioMouseClicked(evt);
+            }
+        });
+        cmbCentroExpendio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbPerfilActionPerformed(evt);
+                cmbCentroExpendioActionPerformed(evt);
             }
         });
 
         lblEstado.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblEstado.setText("Local:");
+
+        cmbLocales.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbLocalesActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlDetalleLayout = new javax.swing.GroupLayout(pnlDetalle);
         pnlDetalle.setLayout(pnlDetalleLayout);
@@ -480,9 +500,9 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
                     .addComponent(lblCodigo))
                 .addGap(10, 10, 10)
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(cmbEstado, javax.swing.GroupLayout.Alignment.LEADING, 0, 335, Short.MAX_VALUE)
+                    .addComponent(cmbLocales, javax.swing.GroupLayout.Alignment.LEADING, 0, 335, Short.MAX_VALUE)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cmbPerfil, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cmbCentroExpendio, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(36, 36, 36))
         );
         pnlDetalleLayout.setVerticalGroup(
@@ -491,11 +511,11 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPerfil)
-                    .addComponent(cmbPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbCentroExpendio, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEstado)
-                    .addComponent(cmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbLocales, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -521,10 +541,10 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         lblPerfil3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblPerfil3.setText("Empleado");
 
-        cmbUsuario.setMinimumSize(new java.awt.Dimension(30, 25));
-        cmbUsuario.addActionListener(new java.awt.event.ActionListener() {
+        cmbEmpleado.setMinimumSize(new java.awt.Dimension(30, 25));
+        cmbEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbUsuarioActionPerformed(evt);
+                cmbEmpleadoActionPerformed(evt);
             }
         });
 
@@ -575,7 +595,7 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
                         .addComponent(txtCodigo5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnlDetalle3Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cmbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cmbEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlDetalle3Layout.setVerticalGroup(
@@ -584,7 +604,7 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPerfil3)
-                    .addComponent(cmbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -818,9 +838,9 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_btnSalirActionPerformed
 
-    private void cmbPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbPerfilActionPerformed
+    private void cmbCentroExpendioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCentroExpendioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cmbPerfilActionPerformed
+    }//GEN-LAST:event_cmbCentroExpendioActionPerformed
 
     private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
         // TODO add your handling code here:
@@ -846,9 +866,9 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCodigo3ActionPerformed
 
-    private void cmbUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbUsuarioActionPerformed
+    private void cmbEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbEmpleadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cmbUsuarioActionPerformed
+    }//GEN-LAST:event_cmbEmpleadoActionPerformed
 
     private void txtCodigo4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigo4ActionPerformed
         // TODO add your handling code here:
@@ -861,6 +881,29 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
     private void txtCodigo6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigo6ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCodigo6ActionPerformed
+
+    private void cmbLocalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbLocalesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbLocalesActionPerformed
+
+    private void cmbCentroExpendioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbCentroExpendioMouseClicked
+        // TODO add your handling code here:
+        LocalBO localBO=new LocalBO();
+        CentroExpendioVO centroexpendioVO = new CentroExpendioVO();
+         try {
+            centroexpendioVO=(CentroExpendioVO)cmbCentroExpendio.getSelectedItem();
+            cmbLocales.setModel(localBO.generaModeloDatosCombo(centroexpendioVO.getCodigo()));
+        
+        } catch (Exception e) {
+            
+             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+        }
+        finally{
+            localBO = null;   
+       
+        }
+        
+    }//GEN-LAST:event_cmbCentroExpendioMouseClicked
 
     /**
      * @param args the command line arguments
@@ -907,13 +950,13 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGrabar;
     private javax.swing.JButton btnSalir;
-    private javax.swing.JComboBox<String> cmbEstado;
+    private javax.swing.JComboBox<String> cmbCentroExpendio;
+    private javax.swing.JComboBox<String> cmbEmpleado;
     private javax.swing.JComboBox<String> cmbEstado1;
     private javax.swing.JComboBox<String> cmbEstado2;
-    private javax.swing.JComboBox<String> cmbPerfil;
+    private javax.swing.JComboBox<String> cmbLocales;
     private javax.swing.JComboBox<String> cmbPerfil1;
     private javax.swing.JComboBox<String> cmbPerfil2;
-    private javax.swing.JComboBox<String> cmbUsuario;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

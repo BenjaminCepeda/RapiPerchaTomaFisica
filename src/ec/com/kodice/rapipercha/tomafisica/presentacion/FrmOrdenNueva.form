@@ -680,9 +680,9 @@
                       </Group>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="cmbEstado" alignment="0" pref="335" max="32767" attributes="0"/>
+                          <Component id="cmbLocales" alignment="0" pref="335" max="32767" attributes="0"/>
                           <Component id="txtCodigo" max="32767" attributes="0"/>
-                          <Component id="cmbPerfil" alignment="1" max="32767" attributes="0"/>
+                          <Component id="cmbCentroExpendio" alignment="1" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                   </Group>
@@ -694,12 +694,12 @@
                       <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="lblPerfil" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cmbPerfil" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Component id="cmbCentroExpendio" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="lblEstado" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cmbEstado" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                          <Component id="cmbLocales" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -742,14 +742,15 @@
                 <Property name="text" type="java.lang.String" value="Centro de Expendio"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="cmbPerfil">
+            <Component class="javax.swing.JComboBox" name="cmbCentroExpendio">
               <Properties>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[30, 25]"/>
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbPerfilActionPerformed"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="cmbCentroExpendioMouseClicked"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbCentroExpendioActionPerformed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -763,7 +764,10 @@
                 <Property name="text" type="java.lang.String" value="Local:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="cmbEstado">
+            <Component class="javax.swing.JComboBox" name="cmbLocales">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbLocalesActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
@@ -800,7 +804,7 @@
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="cmbUsuario" min="-2" pref="634" max="-2" attributes="0"/>
+                              <Component id="cmbEmpleado" min="-2" pref="634" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -813,7 +817,7 @@
                       <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="lblPerfil3" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cmbUsuario" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Component id="cmbEmpleado" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -863,14 +867,14 @@
                 <Property name="text" type="java.lang.String" value="Empleado"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="cmbUsuario">
+            <Component class="javax.swing.JComboBox" name="cmbEmpleado">
               <Properties>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[30, 25]"/>
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbUsuarioActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbEmpleadoActionPerformed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
