@@ -888,6 +888,7 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
 
     private void cmbCentroExpendioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbCentroExpendioMouseClicked
         // TODO add your handling code here:
+   
         LocalBO localBO=new LocalBO();
         CentroExpendioVO centroexpendioVO = new CentroExpendioVO();
          try {
@@ -902,7 +903,7 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             localBO = null;   
        
         }
-        
+       
     }//GEN-LAST:event_cmbCentroExpendioMouseClicked
 
     /**
