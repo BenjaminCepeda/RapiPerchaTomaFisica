@@ -5,9 +5,11 @@
  */
 
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
+
 import ec.com.kodice.rapipercha.tomafisica.negocio.DetalleOrdenBO;
 import ec.com.kodice.rapipercha.tomafisica.persistencia.DetalleOrdenVO;
 import ec.com.kodice.rapipercha.util.UtilPresentacion;
+import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import javax.swing.JOptionPane;
 import javax.swing.text.DefaultFormatterFactory;
@@ -35,18 +37,7 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
             seteaControles(soloLectura);
         cargarDatos();
     }
-    
-    public DefaultFormatterFactory factoryFlotantes(){
-        NumberFormatter formatter = new NumberFormatter(
-                new DecimalFormat("###0.00"));
-        formatter.setValueClass(Float.class);
-        formatter.setAllowsInvalid(false);
-        // Si quieres comprobar que sea válido, cada vez que se pulse una tecla
-        formatter.setCommitsOnValidEdit(true);
-        DefaultFormatterFactory factory = new DefaultFormatterFactory(formatter);
-        return(factory);
-    }
-    
+        
     public FrmRegistroTomaFisica() {
         initComponents();
         //txtCantidadRevisada.setFormatterFactory(factoryFlotantes());
@@ -224,10 +215,31 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
         txtFechaProceso.setPreferredSize(new java.awt.Dimension(7, 22));
 
         txtCantidadRevisada.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
+        txtCantidadRevisada.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCantidadRevisadaKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCantidadRevisadaKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCantidadRevisadaKeyTyped(evt);
+            }
+        });
 
         txtCantidadMalEstado.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
+        txtCantidadMalEstado.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCantidadMalEstadoKeyTyped(evt);
+            }
+        });
 
         txtCantidadVencido.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
+        txtCantidadVencido.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCantidadVencidoKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlDetalleLayout = new javax.swing.GroupLayout(pnlDetalle);
         pnlDetalle.setLayout(pnlDetalleLayout);
@@ -296,13 +308,10 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblExistencia)
                     .addComponent(txtExistencia, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlDetalleLayout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(lblCantidadRevisada))
-                    .addGroup(pnlDetalleLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCantidadRevisada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtCantidadRevisada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCantidadRevisada))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlDetalleLayout.createSequentialGroup()
@@ -314,11 +323,11 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCantidadVencido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblCantidadVencido))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtFechaProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblFechaProceso))
-                .addGap(0, 9, Short.MAX_VALUE))
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         pnlPie.setMaximumSize(new java.awt.Dimension(32767, 90));
@@ -394,9 +403,9 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
                 .addComponent(pnlCabecera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlPie, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -407,7 +416,7 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlContenedor, javax.swing.GroupLayout.PREFERRED_SIZE, 454, Short.MAX_VALUE)
+            .addComponent(pnlContenedor, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
         );
 
         pack();
@@ -417,8 +426,15 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
         DetalleOrdenVO detalleOrdenVO = null;
         DetalleOrdenBO detalleOrdenBO = null;
         int respuestaOperacion = 0;
+        float existencia;
+        float cantidadRevisada;
+        float cantidadMalEstado;
+        float cantidadVencido;
+        
         boolean camposValidos;
         camposValidos = (           
+                !txtExistencia.getText().isEmpty() && 
+                !txtExistencia.getText().trim().equals("") &&
                 !txtCantidadRevisada.getText().isEmpty() && 
                 !txtCantidadRevisada.getText().trim().equals("") &&                 
                 !txtCantidadMalEstado.getText().isEmpty() && 
@@ -427,12 +443,17 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
                 !txtCantidadVencido.getText().trim().equals("")                 
                 );                
         if (camposValidos){
-            camposValidos = Float.parseFloat(txtCantidadRevisada.getText())>=0 &&
-                    Float.parseFloat(txtCantidadRevisada.getText())<=
-                    Float.parseFloat(txtExistencia.getText()) &&
-                    (Float.parseFloat(txtCantidadMalEstado.getText()) +
-                    Float.parseFloat(txtCantidadVencido.getText())) <=
-                    Float.parseFloat(txtCantidadRevisada.getText());
+            existencia = Float.parseFloat(txtExistencia.getText().
+                    replace(",", "."));
+            cantidadRevisada = Float.parseFloat(txtCantidadRevisada.getText().
+                    replace(",", "."));
+            cantidadMalEstado = Float.parseFloat(txtCantidadMalEstado.getText().
+                    replace(",", "."));
+            cantidadVencido = Float.parseFloat(txtCantidadVencido.getText().
+                    replace(",", "."));            
+            camposValidos = cantidadRevisada>=0 &&
+                    cantidadRevisada <= existencia &&
+                    cantidadMalEstado + cantidadVencido <=cantidadRevisada;
             if (camposValidos){
                 detalleOrdenBO = new DetalleOrdenBO();
                 detalleOrdenVO = new DetalleOrdenVO(
@@ -441,11 +462,10 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
                     0, 
                     Float.parseFloat(txtCantidadMinima.getText()), 
                     Float.parseFloat(txtExistencia.getText()),
-                    Float.parseFloat(txtCantidadRevisada.getText()),
-                    Float.parseFloat(txtCantidadMalEstado.getText()),
-                    Float.parseFloat(txtCantidadVencido.getText()),
-                    null
-                );                            
+                    cantidadRevisada,
+                    cantidadMalEstado,
+                    cantidadVencido,
+                    null);                            
                 try{
                     respuestaOperacion = detalleOrdenBO.registrarTomaFisica(detalleOrdenVO);
                     if (respuestaOperacion>0)
@@ -474,6 +494,46 @@ public class FrmRegistroTomaFisica extends javax.swing.JDialog {
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void txtCantidadRevisadaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadRevisadaKeyPressed
+
+    }//GEN-LAST:event_txtCantidadRevisadaKeyPressed
+
+    private void txtCantidadRevisadaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadRevisadaKeyReleased
+
+    }//GEN-LAST:event_txtCantidadRevisadaKeyReleased
+
+    private void txtCantidadRevisadaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadRevisadaKeyTyped
+        char c = evt.getKeyChar();                                 
+        if (!((Character.isDigit(c) ||
+                  (c == KeyEvent.VK_PERIOD) ||
+                  (c == KeyEvent.VK_BACK_SPACE) ||
+                  (c == KeyEvent.VK_DELETE)))) {
+                   evt.consume();
+        }
+    }//GEN-LAST:event_txtCantidadRevisadaKeyTyped
+
+    private void txtCantidadMalEstadoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadMalEstadoKeyTyped
+        char c = evt.getKeyChar();                                 
+        if (!((Character.isDigit(c) ||
+                  (c == KeyEvent.VK_PERIOD) ||
+                  (c == KeyEvent.VK_BACK_SPACE) ||
+                  (c == KeyEvent.VK_DELETE)))) {
+                   evt.consume();
+        }
+
+    }//GEN-LAST:event_txtCantidadMalEstadoKeyTyped
+
+    private void txtCantidadVencidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadVencidoKeyTyped
+        char c = evt.getKeyChar();                                 
+        if (!((Character.isDigit(c) ||
+                  (c == KeyEvent.VK_PERIOD) ||
+                  (c == KeyEvent.VK_BACK_SPACE) ||
+                  (c == KeyEvent.VK_DELETE)))) {
+                   evt.consume();
+        }
+
+    }//GEN-LAST:event_txtCantidadVencidoKeyTyped
 
     /**
      * @param args the command line arguments
