@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportOrdenes" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b3903b6d-7d95-46d7-9bc2-72c78a2f5f0b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT
+     tcentro_expendio.`CEN_NOMBRE_COMERCIAL` AS tcentro_expendio_CEN_NOMBRE_COMERCIAL,
+     tlocales.`LOC_NOMBRE` AS tlocales_LOC_NOMBRE,
+     tlocales.`LOC_DIRECCION` AS tlocales_LOC_DIRECCION,
+     tordenes.`ORD_FECHA_AREALIZAR` AS tordenes_ORD_FECHA_AREALIZAR,
+     tordenes.`ORD_CODIGO` AS tordenes_ORD_CODIGO,
+     tordenes.`USU_CODIGO` AS tordenes_USU_CODIGO,
+     tlocales.`LOC_CODIGO` AS tlocales_LOC_CODIGO,
+     tordenes.`ORD_CODIGO_EXTERNO_ORDEN` AS tordenes_ORD_CODIGO_EXTERNO_ORDEN,
+     tordenes.`ORD_CODIGO_USUARIO_GENERACION` AS tordenes_ORD_CODIGO_USUARIO_GENERACION,
+     tordenes.`ORD_ESTADO` AS tordenes_ORD_ESTADO,
+     tcentro_expendio.`CEN_CODIGO` AS tcentro_expendio_CEN_CODIGO,
+     tcentro_expendio.`CEN_RUC` AS tcentro_expendio_CEN_RUC,
+     tcentro_expendio.`CEN_RAZON_SOCIAL` AS tcentro_expendio_CEN_RAZON_SOCIAL,
+     tusuarios.`USU_CODIGO` AS tusuarios_USU_CODIGO,
+     tusuarios.`USU_NOMBRE` AS tusuarios_USU_NOMBRE,
+     tordenes.`ORD_FECHA_GENERACION` AS tordenes_ORD_FECHA_GENERACION
+FROM
+     `tcentro_expendio` tcentro_expendio INNER JOIN `tlocales` tlocales ON tcentro_expendio.`CEN_CODIGO` = tlocales.`CEN_CODIGO`
+     INNER JOIN `tordenes` tordenes ON tlocales.`LOC_CODIGO` = tordenes.`LOC_CODIGO`
+     INNER JOIN `tusuarios` tusuarios ON tordenes.`USU_CODIGO` = tusuarios.`USU_CODIGO`]]>
+	</queryString>
+	<field name="tcentro_expendio_CEN_NOMBRE_COMERCIAL" class="java.lang.String"/>
+	<field name="tlocales_LOC_NOMBRE" class="java.lang.String"/>
+	<field name="tlocales_LOC_DIRECCION" class="java.lang.String"/>
+	<field name="tordenes_ORD_FECHA_AREALIZAR" class="java.sql.Timestamp"/>
+	<field name="tordenes_ORD_CODIGO" class="java.lang.Integer"/>
+	<field name="tordenes_USU_CODIGO" class="java.lang.Integer"/>
+	<field name="tlocales_LOC_CODIGO" class="java.lang.Integer"/>
+	<field name="tordenes_ORD_CODIGO_EXTERNO_ORDEN" class="java.lang.String"/>
+	<field name="tordenes_ORD_CODIGO_USUARIO_GENERACION" class="java.lang.Integer"/>
+	<field name="tordenes_ORD_ESTADO" class="java.lang.String"/>
+	<field name="tcentro_expendio_CEN_CODIGO" class="java.lang.Integer"/>
+	<field name="tcentro_expendio_CEN_RUC" class="java.lang.String"/>
+	<field name="tcentro_expendio_CEN_RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="tusuarios_USU_CODIGO" class="java.lang.Integer"/>
+	<field name="tusuarios_USU_NOMBRE" class="java.lang.String"/>
+	<field name="tordenes_ORD_FECHA_GENERACION" class="java.sql.Timestamp"/>
+	<group name="tusuarios_USU_NOMBRE">
+		<groupExpression><![CDATA[$F{tusuarios_USU_NOMBRE}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="0" width="802" height="79" backcolor="#407CCA" uuid="7620d4d5-d37f-4bd0-a300-a0c4f6c4ae3e"/>
+				<staticText>
+					<reportElement x="240" y="23" width="376" height="30" forecolor="#FFFFFF" uuid="37f4b1e1-2698-4bd7-886f-ca8d13530a72"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[REPORTE DE ORDENES GENERADAS POR FECHA]]></text>
+				</staticText>
+				<image>
+					<reportElement x="4" y="8" width="120" height="45" uuid="9b80edf7-6cea-4901-9226-0692fd097a92"/>
+					<imageExpression><![CDATA["D:\\René Camacho\\Documents\\NetBeansProjects\\RapiPerchaComun\\src\\ec\\com\\kodice\\rapipercha\\imagenes\\logo-rapipercha.png"]]></imageExpression>
+				</image>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="9" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="39" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="2" width="58" height="37" backcolor="#CCCCCC" uuid="74fc3685-aafe-497f-977d-bc73a67b4517"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ORDEN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="58" y="2" width="108" height="37" backcolor="#CCCCCC" uuid="87714c5f-bd52-496a-9199-b4ba13653a4e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA A REALIZAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="300" y="2" width="132" height="37" backcolor="#CCCCCC" uuid="62c2582f-7c20-48b0-adbe-1a204b987fe9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOCAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="432" y="2" width="138" height="37" backcolor="#CCCCCC" uuid="48e43b94-632a-4354-acbe-f74cb2fc1895"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="570" y="2" width="84" height="37" backcolor="#CCCCCC" uuid="fcb53981-c2aa-402e-bcd6-5a4563eeecc5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="654" y="2" width="89" height="37" backcolor="#CCCCCC" uuid="64a14b21-08c1-4ff0-b278-54f26e5cfd61"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[GENERADO EN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="743" y="2" width="59" height="37" backcolor="#CCCCCC" uuid="ccc2c70b-ccb3-4b42-8982-5d98a5738fda"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="166" y="2" width="134" height="37" backcolor="#CCCCCC" uuid="4988fd17-6697-4eba-ab7b-4daf7b48caca"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CENTRO DE EXPENDIO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<textField>
+				<reportElement x="654" y="0" width="104" height="20" uuid="f7bf6c29-1a3f-48fb-8262-f4f75a96110b"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{tordenes_ORD_FECHA_GENERACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="570" y="0" width="84" height="20" uuid="c3fcd89b-8a2e-4d5d-b101-33c90780f11f"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{tusuarios_USU_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="166" y="0" width="134" height="20" uuid="01cdf6ad-8053-405f-8466-d3a39d369cc2"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{tcentro_expendio_CEN_NOMBRE_COMERCIAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="432" y="0" width="138" height="35" uuid="5d2cfe8b-53e0-438c-ab94-9331765f7eed"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{tlocales_LOC_DIRECCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="5" width="58" height="20" uuid="94ff2278-17d2-48a1-9c1f-20a7c4a62199"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{tordenes_ORD_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="132" height="20" uuid="c7482f83-025f-4d06-8be5-909c239b5d96"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{tlocales_LOC_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="758" y="0" width="44" height="20" uuid="c7621839-95cb-4cdd-a3b9-763b5ebd3136"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{tordenes_ORD_ESTADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="58" y="0" width="108" height="20" uuid="b224b0e5-e00e-4ca9-b165-01fdbb643b14"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{tordenes_ORD_FECHA_AREALIZAR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<image>
+				<reportElement x="722" y="14" width="80" height="28" uuid="33dfbc7d-9e45-4205-a99e-1e9d32c7e5cb"/>
+				<imageExpression><![CDATA["D:\\René Camacho\\Documents\\NetBeansProjects\\RapiPerchaComun\\src\\ec\\com\\kodice\\rapipercha\\imagenes\\logo-kodice.png"]]></imageExpression>
+			</image>
+		</band>
+	</summary>
+</jasperReport>
