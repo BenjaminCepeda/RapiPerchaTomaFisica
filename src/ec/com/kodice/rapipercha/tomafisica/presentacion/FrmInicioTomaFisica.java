@@ -65,6 +65,10 @@ public class FrmInicioTomaFisica extends JFrame {
         mnuTomaFisica = new javax.swing.JMenu();
         MitOrdenTomaFisica = new javax.swing.JMenuItem();
         miTomaFisica = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(900, 700));
@@ -188,6 +192,34 @@ public class FrmInicioTomaFisica extends JFrame {
 
         barPrincipal.add(mnuTomaFisica);
 
+        jMenu1.setText("Reportes");
+
+        jMenuItem1.setText("Listado de Ordenes");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuItem2.setText("Impresión de Orden Generada");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
+        jMenuItem3.setText("Impresión Orden Toma Física");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem3);
+
+        barPrincipal.add(jMenu1);
+
         setJMenuBar(barPrincipal);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -226,6 +258,34 @@ public class FrmInicioTomaFisica extends JFrame {
         frmordenlistado.setLocationRelativeTo(null);
         
     }//GEN-LAST:event_miTomaFisicaActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        FrmReportesOrdenesAdministracion frmresportesOrdenesAdministracion 
+                = new FrmReportesOrdenesAdministracion(empleadoLogueado,
+                        proveedorEmpleadoLogueado);
+        frmresportesOrdenesAdministracion.setVisible(true);
+        frmresportesOrdenesAdministracion.setLocationRelativeTo(null);
+        
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+         FrmReporteOrdenGenerada frmreporteOrdenGenerada
+                = new FrmReporteOrdenGenerada(empleadoLogueado,
+                        proveedorEmpleadoLogueado);
+        frmreporteOrdenGenerada.setVisible(true);
+        frmreporteOrdenGenerada.setLocationRelativeTo(null);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+        FrmReporteOrdenTomaFisica frmreporteOrdenTomaFisica
+                = new FrmReporteOrdenTomaFisica(empleadoLogueado,
+                        proveedorEmpleadoLogueado);
+        frmreporteOrdenTomaFisica.setVisible(true);
+        frmreporteOrdenTomaFisica.setLocationRelativeTo(null);
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -269,6 +329,10 @@ public class FrmInicioTomaFisica extends JFrame {
     private javax.swing.JMenuItem MitOrdenTomaFisica;
     private javax.swing.JMenuBar barPrincipal;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
