@@ -5,20 +5,38 @@
  */
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
 
+import ec.com.kodice.rapipercha.administracion.persistencia.EmpleadoVO;
+import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
+import javax.swing.JFrame;
+
 /**
  * Esta clase contiene atributos y métodos del formulario de Inicio
  * @author Benjamin Cepeda
  * @version v1.0
  * @date 2020/12/03 
  */
-public class FrmInicioTomaFisica extends javax.swing.JFrame {
+public class FrmInicioTomaFisica extends JFrame {
+    private EmpleadoVO empleadoLogueado= null;
+    private ProveedorVO proveedorEmpleadoLogueado = null;
+    
 
     /**
      * Creates new form FrmInicio
      */
-    public FrmInicioTomaFisica() {
-        initComponents();
+  //  public FrmInicioTomaFisica1() {
+    //    initComponents();
+      //  this.setLocationRelativeTo(null);        
+    //}
+    
+    public FrmInicioTomaFisica(EmpleadoVO empleadoLogueado, 
+            ProveedorVO proveedorEmpleadoLoguedo) {
+                initComponents();
         this.setLocationRelativeTo(null);        
+        this.empleadoLogueado = empleadoLogueado;
+        this.proveedorEmpleadoLogueado = proveedorEmpleadoLoguedo;
+        lblNombreUsuario.setText(empleadoLogueado.getUsuario().getNombre());
+        lblPerfil.setText(empleadoLogueado.getUsuario().getPerfil().getNombre());
+        lblEmpresa.setText(proveedorEmpleadoLogueado.getNombreComercial());
     }
 
     /**
@@ -32,10 +50,25 @@ public class FrmInicioTomaFisica extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        pnlPie = new javax.swing.JPanel();
+        lblTituloNombreUsuario = new javax.swing.JLabel();
+        lblNombreUsuario = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        lblTituloPerfil = new javax.swing.JLabel();
+        lblPerfil = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        lblPoweredBy = new javax.swing.JLabel();
+        lblKodice = new javax.swing.JLabel();
+        lblTituloEmpresa = new javax.swing.JLabel();
+        lblEmpresa = new javax.swing.JLabel();
         barPrincipal = new javax.swing.JMenuBar();
         mnuTomaFisica = new javax.swing.JMenu();
+        MitOrdenTomaFisica = new javax.swing.JMenuItem();
+        miTomaFisica = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(900, 700));
+        setResizable(false);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/logo-rapipercha.png"))); // NOI18N
 
@@ -44,19 +77,115 @@ public class FrmInicioTomaFisica extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(387, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(379, 379, 379))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(421, 421, 421))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(306, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(280, 280, 280))
+                .addContainerGap(257, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(191, 191, 191))
+        );
+
+        pnlPie.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlPie.setMaximumSize(new java.awt.Dimension(32767, 25));
+        pnlPie.setMinimumSize(new java.awt.Dimension(100, 25));
+        pnlPie.setPreferredSize(new java.awt.Dimension(924, 25));
+
+        lblTituloNombreUsuario.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblTituloNombreUsuario.setText("Usuario:");
+        lblTituloNombreUsuario.setAlignmentY(0.0F);
+
+        lblNombreUsuario.setText("Usuario Logueado");
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        lblTituloPerfil.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblTituloPerfil.setText("Perfil:");
+        lblTituloPerfil.setAlignmentY(0.0F);
+
+        lblPerfil.setText("Perfil del Usuario");
+
+        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        lblPoweredBy.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblPoweredBy.setForeground(new java.awt.Color(51, 51, 255));
+        lblPoweredBy.setText("Powered by:");
+        lblPoweredBy.setAlignmentY(0.0F);
+
+        lblKodice.setForeground(new java.awt.Color(0, 0, 255));
+        lblKodice.setText("Kodice S.A. - UIsrael @2020");
+
+        lblTituloEmpresa.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblTituloEmpresa.setText("Empresa:");
+        lblTituloEmpresa.setAlignmentY(0.0F);
+
+        lblEmpresa.setText("Nombre Empresa");
+
+        javax.swing.GroupLayout pnlPieLayout = new javax.swing.GroupLayout(pnlPie);
+        pnlPie.setLayout(pnlPieLayout);
+        pnlPieLayout.setHorizontalGroup(
+            pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPieLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblTituloNombreUsuario)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblNombreUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTituloPerfil)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTituloEmpresa)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 163, Short.MAX_VALUE)
+                .addComponent(lblPoweredBy)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblKodice)
+                .addGap(128, 128, 128))
+        );
+        pnlPieLayout.setVerticalGroup(
+            pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(lblKodice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblPoweredBy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(lblEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblTituloEmpresa))
+            .addGroup(pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(lblNombreUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblTituloNombreUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblTituloPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jSeparator1))
+            .addComponent(jSeparator2)
         );
 
         mnuTomaFisica.setText("Toma física");
+
+        MitOrdenTomaFisica.setText("Ingreso de Orden de Toma Física");
+        MitOrdenTomaFisica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MitOrdenTomaFisicaActionPerformed(evt);
+            }
+        });
+        mnuTomaFisica.add(MitOrdenTomaFisica);
+
+        miTomaFisica.setText("Toma Física");
+        miTomaFisica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miTomaFisicaActionPerformed(evt);
+            }
+        });
+        mnuTomaFisica.add(miTomaFisica);
+
         barPrincipal.add(mnuTomaFisica);
 
         setJMenuBar(barPrincipal);
@@ -66,18 +195,37 @@ public class FrmInicioTomaFisica extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlPie, javax.swing.GroupLayout.DEFAULT_SIZE, 1002, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pnlPie, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void MitOrdenTomaFisicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MitOrdenTomaFisicaActionPerformed
+        // TODO add your handling code here:
+        FrmOrdenesAdministracion frmordenesadministracion = new FrmOrdenesAdministracion(empleadoLogueado,proveedorEmpleadoLogueado);
+        frmordenesadministracion.setVisible(true);
+        frmordenesadministracion.setLocationRelativeTo(null);
+        
+    }//GEN-LAST:event_MitOrdenTomaFisicaActionPerformed
+
+    private void miTomaFisicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miTomaFisicaActionPerformed
+        // TODO add your handling code here:
+        FrmOrdenListado frmordenlistado = new FrmOrdenListado(empleadoLogueado,proveedorEmpleadoLogueado);
+        frmordenlistado.setVisible(true);
+        frmordenlistado.setLocationRelativeTo(null);
+        
+    }//GEN-LAST:event_miTomaFisicaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -106,19 +254,34 @@ public class FrmInicioTomaFisica extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrmInicioTomaFisica().setVisible(true);
+                
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem MitOrdenTomaFisica;
     private javax.swing.JMenuBar barPrincipal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lblEmpresa;
+    private javax.swing.JLabel lblKodice;
+    private javax.swing.JLabel lblNombreUsuario;
+    private javax.swing.JLabel lblPerfil;
+    private javax.swing.JLabel lblPoweredBy;
+    private javax.swing.JLabel lblTituloEmpresa;
+    private javax.swing.JLabel lblTituloNombreUsuario;
+    private javax.swing.JLabel lblTituloPerfil;
+    private javax.swing.JMenuItem miTomaFisica;
     private javax.swing.JMenu mnuTomaFisica;
+    private javax.swing.JPanel pnlPie;
     // End of variables declaration//GEN-END:variables
 }

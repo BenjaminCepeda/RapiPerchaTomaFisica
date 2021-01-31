@@ -345,6 +345,36 @@ public class DetalleOrdenDAO {
         return (filasAfectadas);
     }
     
+    
+      public int eliminarDetalleporCodigoOrden(int codigo) throws Exception {
+        Connection conexion = null;
+        PreparedStatement sentencia = null;
+        int filasAfectadas = 0;
+        try {
+            conexion = CustomConnection.getConnection();
+            String consulta = "DELETE FROM `tdetalle_ordenes` "
+                    + "WHERE `tdetalle_ordenes`.`ORD_CODIGO` = ?";
+            sentencia = conexion.prepareStatement(consulta);
+            sentencia.setInt(1, codigo);
+            filasAfectadas = sentencia.executeUpdate();
+            conexion.close();
+        } 
+        catch(Exception e){
+            conexion.close();
+            throw new Exception(e.getMessage() + "\n[" + this.getClass().getName()
+                    + "] ");
+        }    
+        finally{
+            try {
+                conexion.close();
+            } catch (SQLException e){
+                throw new Exception(e.getMessage() + "\n[" 
+                        + this.getClass().getName() + "] ");
+            }
+        }        
+        return (filasAfectadas);
+    }
+    
     /**
      * Permite registrar la toma fisica de un detalle de la Orden
      *
