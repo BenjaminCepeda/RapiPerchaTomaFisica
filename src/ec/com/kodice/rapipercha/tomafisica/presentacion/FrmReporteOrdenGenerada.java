@@ -299,6 +299,7 @@ public class FrmReporteOrdenGenerada extends javax.swing.JFrame {
             conexion = CustomConnection.getConnection();
             JasperReport reporte;
             reporte=JasperCompileManager.compileReport("src/ec/com/kodice/rapipercha/reporte/reportSoloOrden.jrxml");
+            
             JasperPrint jp = JasperFillManager.fillReport(reporte,null,conexion);
             JasperViewer.viewReport(jp,true);
             
