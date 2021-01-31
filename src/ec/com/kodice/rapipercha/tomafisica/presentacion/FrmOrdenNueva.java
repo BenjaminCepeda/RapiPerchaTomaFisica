@@ -49,7 +49,7 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         this.setLocationRelativeTo(null);
         this.empleadoLogueado = empleadoLogueado;
         this.proveedorEmpleadoLogueado=proveedorEmpleadoLoguedo;
-         this.lblNombreEmpresa.setText(proveedorEmpleadoLogueado.getNombreComercial()
+        this.lblNombreEmpresa.setText(proveedorEmpleadoLogueado.getNombreComercial()
             + " - "+ proveedorEmpleadoLogueado.getRazonSocial());
         
         this.lblNombreEmpleado1.setText(empleadoLogueado.getNombres() + " " +
@@ -60,6 +60,7 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             seteaControles(soloLectura);
         } else{
            cargarDatos(); 
+                     
         }
             
         
@@ -79,7 +80,24 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         this.setLocationRelativeTo(null);
         this.codigoActual = 0;
         cargarDatos();
-        tblProductosenorden.setVisible(false);
+        if (cmbCentroExpendio.getModel()!=null){
+           LocalBO localBO=new LocalBO();
+           CentroExpendioVO centroexpendioVO = new CentroExpendioVO();
+           centroexpendioVO=(CentroExpendioVO)cmbCentroExpendio.getSelectedItem();
+           try {
+           cmbLocales.setModel(localBO.generaModeloDatosCombo(centroexpendioVO.getCodigo()));
+           CargaDatosProductosporLocal();
+             } catch (Exception e) {
+            
+             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+            }
+            finally{
+            localBO = null;   
+           
+            }
+           
+          }
+        
         dtpFecha.datePicker.setDateToToday();
         dtpFecha.timePicker.setTimeToNow();
     }
@@ -102,6 +120,7 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         try {
             cmbEmpleado.setModel(empleadoBO.generaModeloDatosCombo(proveedorEmpleadoLogueado.getCodigo()));
             cmbCentroExpendio.setModel(centrodeexpendioBO.generaModeloDatosCombo(proveedorEmpleadoLogueado.getCodigo()));
+            
         } catch (Exception e) {
             
              UtilPresentacion.mostrarMensajeError(this, e.getMessage());
@@ -1009,7 +1028,7 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         CentroExpendioVO centroexpendioVO = new CentroExpendioVO();
          try {
             centroexpendioVO=(CentroExpendioVO)cmbCentroExpendio.getSelectedItem();
-            //cmbLocales.setModel(localBO.generaModeloDatosCombo(centroexpendioVO.getCodigo()));
+            cmbLocales.setModel(localBO.generaModeloDatosCombo(centroexpendioVO.getCodigo()));
         
         } catch (Exception e) {
             
