@@ -9,11 +9,23 @@ package ec.com.kodice.rapipercha.tomafisica.presentacion;
 import ec.com.kodice.rapipercha.administracion.negocio.CentrodeExpendioBO;
 import ec.com.kodice.rapipercha.administracion.negocio.EmpleadoBO;
 import ec.com.kodice.rapipercha.administracion.negocio.LocalBO;
+import ec.com.kodice.rapipercha.administracion.negocio.ProductoBO;
 import ec.com.kodice.rapipercha.administracion.persistencia.CentroExpendioVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.EmpleadoVO;
+import ec.com.kodice.rapipercha.administracion.persistencia.LocalVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
+import ec.com.kodice.rapipercha.tomafisica.negocio.DetalleOrdenBO;
+import ec.com.kodice.rapipercha.tomafisica.negocio.OrdenBO;
+import ec.com.kodice.rapipercha.tomafisica.persistencia.DetalleOrdenVO;
+import ec.com.kodice.rapipercha.tomafisica.persistencia.OrdenVO;
 import ec.com.kodice.rapipercha.util.UtilPresentacion;
-
+import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.time.LocalDateTime;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 /**
  *
  * Esta clase contiene atributos y métodos del formulario FrmPerfilAdministracion
@@ -31,13 +43,27 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
     }
 
     /** Creates new form FrmOrdenNueva */
-    public FrmOrdenNueva(int codigoActual, boolean soloLectura) {
+    public FrmOrdenNueva(int codigoActual, boolean soloLectura,EmpleadoVO empleadoLogueado, 
+            ProveedorVO proveedorEmpleadoLoguedo) {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.empleadoLogueado = empleadoLogueado;
+        this.proveedorEmpleadoLogueado=proveedorEmpleadoLoguedo;
+         this.lblNombreEmpresa.setText(proveedorEmpleadoLogueado.getNombreComercial()
+            + " - "+ proveedorEmpleadoLogueado.getRazonSocial());
+        
+        this.lblNombreEmpleado1.setText(empleadoLogueado.getNombres() + " " +
+                empleadoLogueado.getApellidos());       
         this.codigoActual = codigoActual;
-        if (soloLectura)
+        if (soloLectura){
+            cargarDatosSoloLectura(codigoActual);
             seteaControles(soloLectura);
-        cargarDatos();
+        } else{
+           cargarDatos(); 
+        }
+            
+        
+        
     }
     
     public FrmOrdenNueva(EmpleadoVO empleadoLogueado, 
@@ -45,16 +71,30 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         initComponents();
         this.empleadoLogueado = empleadoLogueado;
         this.proveedorEmpleadoLogueado=proveedorEmpleadoLoguedo;
+         this.lblNombreEmpresa.setText(proveedorEmpleadoLogueado.getNombreComercial()
+            + " - "+ proveedorEmpleadoLogueado.getRazonSocial());
+        
+        this.lblNombreEmpleado1.setText(empleadoLogueado.getNombres() + " " +
+                empleadoLogueado.getApellidos());       
         this.setLocationRelativeTo(null);
         this.codigoActual = 0;
         cargarDatos();
+        tblProductosenorden.setVisible(false);
+        dtpFecha.datePicker.setDateToToday();
+        dtpFecha.timePicker.setTimeToNow();
     }
     
   
     
     private void seteaControles(boolean soloLectura){
         btnGrabar.setEnabled(!soloLectura);
+        cmbEmpleado.enable(soloLectura);
+        cmbCentroExpendio.enable(soloLectura);
+        cmbLocales.enable(soloLectura);
     }
+    
+    
+    
     private void cargarDatos(){
               
         EmpleadoBO empleadoBO = new EmpleadoBO();
@@ -71,11 +111,120 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             centrodeexpendioBO=null;
         }
         
+     
+    }
+    
+      private void cargarDatosSoloLectura(int codigoOrden){
+              
+        EmpleadoBO empleadoBO = new EmpleadoBO();
+        CentrodeExpendioBO centrodeexpendioBO=new CentrodeExpendioBO();
+        OrdenVO ordenVO= null;
+        ordenVO= new OrdenVO();
+        OrdenBO ordenBO=new OrdenBO();
+        LocalBO localBO=new LocalBO();
+        LocalVO localVO=null;
+        localVO =new LocalVO();
+        try {
+            ordenVO=ordenBO.buscar(codigoOrden);
+            cmbEmpleado.setModel(empleadoBO.generaModeloDatosComboUnSoloItem(ordenVO.getUsuarioCodigo()));
+            if (ordenVO.getFechaARealizar()!=null)
+                    dtpFecha.setDateTimeStrict(ordenVO.getFechaARealizar());
+            txtCodExterno.setText(ordenVO.getCodigoExternoOrden());
+            
+            localVO=localBO.buscar(ordenVO.getLocalVO().getCodigo());
+            cmbLocales.setModel(localBO.generaModeloDatosComboUnSoloItem(localVO.getCodigo()));
+            cmbCentroExpendio.setModel(centrodeexpendioBO.generaModeloDatosComboUnSoloItem(localVO.getCentroExpendioVO().getCodigo()));
+            
+            CargaDatosDetallOrden();
+            
+            //cmbCentroExpendio.setModel(centrodeexpendioBO.generaModeloDatosCombo(proveedorEmpleadoLogueado.getCodigo()));
+        } catch (Exception e) {
+            
+             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+        }
+        finally{
+            empleadoBO = null;   
+            centrodeexpendioBO=null;
+        }
         
+     
+    }
+    
+    
+    public void creachecboxentabla (int column, JTable table){
+        TableColumn tc = table.getColumnModel().getColumn(column);
+        tc.setCellEditor(table.getDefaultEditor(Boolean.class));
+        tc.setCellRenderer(table.getDefaultRenderer(Boolean.class));
         
+    }
+    
+    public boolean IsSelected (int row, int column, JTable table){
+        return table.getValueAt(row, column)!= null;
+    }
+    
+    public void guardadetalle (int codigoOrden,int codProducto, float cantidadMinima, float Existencia){
+        DetalleOrdenBO detalleOrdenBO=null;
+        DetalleOrdenVO detalleordenVO=null;
+        detalleOrdenBO=new DetalleOrdenBO();
+        OrdenVO ordenVO = null;
+        OrdenBO ordenBO =null;
+        ordenBO = new OrdenBO();
+        
+        detalleordenVO=new DetalleOrdenVO(codigoOrden, codProducto,cantidadMinima , 
+                Existencia, 0, 0, 
+                0, null);
+        try {
+            
+            detalleOrdenBO.crear(detalleordenVO);
+        } 
+        catch (Exception e) {
+            UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+            
+        }
         
         
     }
+    
+    
+    public void CargaDatosProductosporLocal () {
+        ProductoBO productoBO=new ProductoBO();
+        LocalVO localVO=new LocalVO();
+         try {
+            localVO=(LocalVO)cmbLocales.getSelectedItem();
+            tblProductosenorden.setModel(productoBO.generaModeloDatosTabla(localVO.getCodigo(), 
+                    this.proveedorEmpleadoLogueado.getCodigo(),new Object[]{"CODIGO", "DESCRIPCIÓN", "COD.EXTERNO",
+                        "CATIDAD MÍNIMA","EXISTENCIA","SELECCIONAR"}));
+            creachecboxentabla(5, tblProductosenorden);
+            tblProductosenorden.setVisible(true);
+        } catch (Exception e) {
+            
+             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+        }
+        finally{
+            productoBO = null;   
+       
+        }
+    }
+         
+    public void CargaDatosDetallOrden() {
+        DetalleOrdenBO detalleOrdenBO=new DetalleOrdenBO();
+        LocalVO localVO=new LocalVO();
+         try {
+            tblProductosenorden.setModel(detalleOrdenBO.generaModeloDatosTabla(codigoActual, 
+                        new Object[]{"CODIGO", "DESCRIPCIÓN", "COD.EXTERNO",
+                        "CATIDAD MÍNIMA","EXISTENCIA"}));
+            //creachecboxentabla(5, tblProductosenorden);
+            tblProductosenorden.setVisible(true);
+        } catch (Exception e) {
+            
+             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+        }
+        finally{
+            detalleOrdenBO = null;   
+       
+        }
+    }
+    
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -121,25 +270,18 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         lblTituloEmpresa = new javax.swing.JLabel();
         lblNombreEmpresa = new javax.swing.JLabel();
         pnlDetalle = new javax.swing.JPanel();
-        lblCodigo = new javax.swing.JLabel();
-        txtCodigo = new javax.swing.JTextField();
         lblPerfil = new javax.swing.JLabel();
         cmbCentroExpendio = new javax.swing.JComboBox<>();
         lblEstado = new javax.swing.JLabel();
         cmbLocales = new javax.swing.JComboBox<>();
         pnlDetalle3 = new javax.swing.JPanel();
-        lblCodigo3 = new javax.swing.JLabel();
-        txtCodigo3 = new javax.swing.JTextField();
         lblPerfil3 = new javax.swing.JLabel();
         cmbEmpleado = new javax.swing.JComboBox<>();
-        lblCodigo4 = new javax.swing.JLabel();
-        txtCodigo4 = new javax.swing.JTextField();
-        lblCodigo5 = new javax.swing.JLabel();
-        txtCodigo5 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        lblCodigo6 = new javax.swing.JLabel();
-        txtCodigo6 = new javax.swing.JTextField();
+        dtpFecha = new com.github.lgooddatepicker.components.DateTimePicker();
+        jLabel5 = new javax.swing.JLabel();
+        txtCodExterno = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         pnlPie = new javax.swing.JPanel();
@@ -149,13 +291,13 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblProductosenorden = new javax.swing.JTable();
 
         pnlDetalle1.setAlignmentX(0.0F);
         pnlDetalle1.setAlignmentY(0.0F);
 
-        lblCodigo1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblCodigo1.setText("Dirección del Local:");
+        lblCodigo1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         txtCodigo1.setEnabled(false);
         txtCodigo1.setMinimumSize(new java.awt.Dimension(7, 22));
@@ -166,8 +308,8 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             }
         });
 
-        lblPerfil1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblPerfil1.setText("Centro de Expendio");
+        lblPerfil1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         cmbPerfil1.setMinimumSize(new java.awt.Dimension(30, 25));
         cmbPerfil1.addActionListener(new java.awt.event.ActionListener() {
@@ -176,26 +318,26 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             }
         });
 
-        lblNombre2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblNombre2.setText("Nombre:");
+        lblNombre2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         txtNombre1.setMinimumSize(new java.awt.Dimension(7, 22));
         txtNombre1.setPreferredSize(new java.awt.Dimension(7, 22));
 
-        lblNombre3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblNombre3.setText("Clave:");
+        lblNombre3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         pswClave1.setMinimumSize(new java.awt.Dimension(7, 22));
         pswClave1.setPreferredSize(new java.awt.Dimension(7, 22));
 
-        lblConfirmacion1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblConfirmacion1.setText("Confirme clave:");
+        lblConfirmacion1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         pswConfirmacion1.setMinimumSize(new java.awt.Dimension(7, 22));
         pswConfirmacion1.setPreferredSize(new java.awt.Dimension(7, 22));
 
-        lblEstado1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblEstado1.setText("Local:");
+        lblEstado1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         javax.swing.GroupLayout pnlDetalle1Layout = new javax.swing.GroupLayout(pnlDetalle1);
         pnlDetalle1.setLayout(pnlDetalle1Layout);
@@ -264,8 +406,8 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         pnlDetalle2.setAlignmentX(0.0F);
         pnlDetalle2.setAlignmentY(0.0F);
 
-        lblCodigo2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblCodigo2.setText("Dirección del Local:");
+        lblCodigo2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         txtCodigo2.setEnabled(false);
         txtCodigo2.setMinimumSize(new java.awt.Dimension(7, 22));
@@ -276,8 +418,8 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             }
         });
 
-        lblPerfil2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblPerfil2.setText("Centro de Expendio");
+        lblPerfil2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         cmbPerfil2.setMinimumSize(new java.awt.Dimension(30, 25));
         cmbPerfil2.addActionListener(new java.awt.event.ActionListener() {
@@ -286,26 +428,26 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             }
         });
 
-        lblNombre4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblNombre4.setText("Nombre:");
+        lblNombre4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         txtNombre2.setMinimumSize(new java.awt.Dimension(7, 22));
         txtNombre2.setPreferredSize(new java.awt.Dimension(7, 22));
 
-        lblNombre5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblNombre5.setText("Clave:");
+        lblNombre5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         pswClave2.setMinimumSize(new java.awt.Dimension(7, 22));
         pswClave2.setPreferredSize(new java.awt.Dimension(7, 22));
 
-        lblConfirmacion2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblConfirmacion2.setText("Confirme clave:");
+        lblConfirmacion2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         pswConfirmacion2.setMinimumSize(new java.awt.Dimension(7, 22));
         pswConfirmacion2.setPreferredSize(new java.awt.Dimension(7, 22));
 
-        lblEstado2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblEstado2.setText("Local:");
+        lblEstado2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         javax.swing.GroupLayout pnlDetalle2Layout = new javax.swing.GroupLayout(pnlDetalle2);
         pnlDetalle2.setLayout(pnlDetalle2Layout);
@@ -379,35 +521,35 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         jPanel1.setAlignmentY(0.0F);
         jPanel1.setPreferredSize(new java.awt.Dimension(800, 600));
 
-        pnlCabecera.setBackground(new java.awt.Color(64, 124, 202));
         pnlCabecera.setAlignmentX(0.0F);
         pnlCabecera.setAlignmentY(0.0F);
+        pnlCabecera.setBackground(new java.awt.Color(64, 124, 202));
         pnlCabecera.setMaximumSize(new java.awt.Dimension(32767, 90));
         pnlCabecera.setMinimumSize(new java.awt.Dimension(0, 90));
         pnlCabecera.setPreferredSize(new java.awt.Dimension(518, 90));
 
         lblLogoRapipercha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/logo-rapipercha.png"))); // NOI18N
 
-        lblTitulo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitulo.setText("Orden de Toma Física");
+        lblTitulo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
 
+        lblNombreEmpleado.setText("NOMBRE EMPLEADO:");
         lblNombreEmpleado.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblNombreEmpleado.setForeground(new java.awt.Color(255, 255, 255));
-        lblNombreEmpleado.setText("NOMBRE EMPLEADO:");
 
+        lblNombreEmpleado1.setText("NOMBRE EMPLEADO");
         lblNombreEmpleado1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblNombreEmpleado1.setForeground(new java.awt.Color(255, 255, 255));
-        lblNombreEmpleado1.setText("NOMBRE EMPLEADO");
 
+        lblTituloEmpresa.setText("EMPRESA:");
         lblTituloEmpresa.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblTituloEmpresa.setForeground(new java.awt.Color(255, 255, 255));
-        lblTituloEmpresa.setText("EMPRESA:");
 
+        lblNombreEmpresa.setText("NOMBRE EMPRESA");
         lblNombreEmpresa.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblNombreEmpresa.setForeground(new java.awt.Color(255, 255, 255));
-        lblNombreEmpresa.setText("NOMBRE EMPRESA");
 
         javax.swing.GroupLayout pnlCabeceraLayout = new javax.swing.GroupLayout(pnlCabecera);
         pnlCabecera.setLayout(pnlCabeceraLayout);
@@ -422,14 +564,14 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
                         .addGap(10, 10, 10)
                         .addGroup(pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlCabeceraLayout.createSequentialGroup()
-                                .addComponent(lblTituloEmpresa)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblNombreEmpresa))
-                            .addGroup(pnlCabeceraLayout.createSequentialGroup()
                                 .addComponent(lblNombreEmpleado)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblNombreEmpleado1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(lblNombreEmpleado1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlCabeceraLayout.createSequentialGroup()
+                                .addComponent(lblTituloEmpresa)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lblNombreEmpresa)))))
+                .addContainerGap(188, Short.MAX_VALUE))
         );
         pnlCabeceraLayout.setVerticalGroup(
             pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -453,22 +595,24 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         pnlDetalle.setAlignmentX(0.0F);
         pnlDetalle.setAlignmentY(0.0F);
 
-        lblCodigo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        lblCodigo.setText("Dirección del Local:");
-
-        txtCodigo.setEnabled(false);
-        txtCodigo.setMinimumSize(new java.awt.Dimension(7, 22));
-        txtCodigo.setPreferredSize(new java.awt.Dimension(7, 22));
-        txtCodigo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCodigoActionPerformed(evt);
-            }
-        });
-
-        lblPerfil.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblPerfil.setText("Centro de Expendio");
+        lblPerfil.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         cmbCentroExpendio.setMinimumSize(new java.awt.Dimension(30, 25));
+        cmbCentroExpendio.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbCentroExpendioItemStateChanged(evt);
+            }
+        });
+        cmbCentroExpendio.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                cmbCentroExpendioPopupMenuWillBecomeVisible(evt);
+            }
+        });
         cmbCentroExpendio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cmbCentroExpendioMouseClicked(evt);
@@ -480,9 +624,19 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             }
         });
 
-        lblEstado.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblEstado.setText("Local:");
+        lblEstado.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
+        cmbLocales.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbLocalesItemStateChanged(evt);
+            }
+        });
+        cmbLocales.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cmbLocalesMouseClicked(evt);
+            }
+        });
         cmbLocales.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbLocalesActionPerformed(evt);
@@ -496,14 +650,12 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             .addGroup(pnlDetalleLayout.createSequentialGroup()
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblPerfil)
-                    .addComponent(lblEstado)
-                    .addComponent(lblCodigo))
+                    .addComponent(lblEstado))
                 .addGap(10, 10, 10)
-                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(cmbLocales, javax.swing.GroupLayout.Alignment.LEADING, 0, 335, Short.MAX_VALUE)
-                    .addComponent(txtCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cmbCentroExpendio, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(36, 36, 36))
+                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cmbCentroExpendio, 0, 710, Short.MAX_VALUE)
+                    .addComponent(cmbLocales, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         pnlDetalleLayout.setVerticalGroup(
             pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -516,59 +668,19 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
                 .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEstado)
                     .addComponent(cmbLocales, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCodigo))
-                .addGap(52, 52, 52))
+                .addGap(77, 77, 77))
         );
 
         pnlDetalle3.setAlignmentX(0.0F);
         pnlDetalle3.setAlignmentY(0.0F);
 
-        lblCodigo3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        lblCodigo3.setText("Nombre");
-
-        txtCodigo3.setEnabled(false);
-        txtCodigo3.setMinimumSize(new java.awt.Dimension(7, 22));
-        txtCodigo3.setPreferredSize(new java.awt.Dimension(7, 22));
-        txtCodigo3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCodigo3ActionPerformed(evt);
-            }
-        });
-
-        lblPerfil3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         lblPerfil3.setText("Empleado");
+        lblPerfil3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         cmbEmpleado.setMinimumSize(new java.awt.Dimension(30, 25));
         cmbEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbEmpleadoActionPerformed(evt);
-            }
-        });
-
-        lblCodigo4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        lblCodigo4.setText("Teléfono");
-
-        txtCodigo4.setEnabled(false);
-        txtCodigo4.setMinimumSize(new java.awt.Dimension(7, 22));
-        txtCodigo4.setPreferredSize(new java.awt.Dimension(7, 22));
-        txtCodigo4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCodigo4ActionPerformed(evt);
-            }
-        });
-
-        lblCodigo5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        lblCodigo5.setText("Correo");
-
-        txtCodigo5.setEnabled(false);
-        txtCodigo5.setMinimumSize(new java.awt.Dimension(7, 22));
-        txtCodigo5.setPreferredSize(new java.awt.Dimension(7, 22));
-        txtCodigo5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCodigo5ActionPerformed(evt);
             }
         });
 
@@ -578,25 +690,10 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDetalle3Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addGroup(pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblPerfil3)
-                    .addComponent(lblCodigo3))
-                .addGroup(pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlDetalle3Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(txtCodigo4, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblCodigo4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCodigo3, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
-                        .addComponent(lblCodigo5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCodigo5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(pnlDetalle3Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cmbEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lblPerfil3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmbEmpleado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         pnlDetalle3Layout.setVerticalGroup(
             pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -605,32 +702,11 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
                 .addGroup(pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPerfil3)
                     .addComponent(cmbEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtCodigo5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblCodigo5))
-                    .addGroup(pnlDetalle3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtCodigo3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblCodigo3)
-                        .addComponent(lblCodigo4)
-                        .addComponent(txtCodigo4, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(28, 28, 28))
         );
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Asignación Empleado Perchador");
-
-        lblCodigo6.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        lblCodigo6.setText("Fecha a realizar");
-
-        txtCodigo6.setEnabled(false);
-        txtCodigo6.setMinimumSize(new java.awt.Dimension(7, 22));
-        txtCodigo6.setPreferredSize(new java.awt.Dimension(7, 22));
-        txtCodigo6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCodigo6ActionPerformed(evt);
-            }
-        });
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -638,26 +714,24 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblCodigo6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtCodigo6, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                .addGap(38, 38, 38))
+                .addComponent(dtpFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblCodigo6)
-                    .addComponent(txtCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addComponent(dtpFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 7, Short.MAX_VALUE))
         );
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel3.setText("Asignación Local de Orden");
+        jLabel5.setText("Código Externo de Orden");
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setText("Asignación Fecha a realizar");
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+
         jLabel4.setText("Asignación Local de Orden");
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -670,15 +744,22 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
                         .addContainerGap()
                         .addComponent(pnlDetalle3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pnlDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
+                        .addGap(35, 35, 35)
+                        .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtCodExterno, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(pnlDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
@@ -690,50 +771,57 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(pnlCabecera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-                .addComponent(pnlDetalle3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(35, 35, 35)
+                .addComponent(pnlDetalle3, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCodExterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel5)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(111, 111, 111)
                     .addComponent(jLabel2)
-                    .addContainerGap(224, Short.MAX_VALUE)))
+                    .addContainerGap(229, Short.MAX_VALUE)))
         );
 
         pnlPie.setMaximumSize(new java.awt.Dimension(32767, 90));
         pnlPie.setMinimumSize(new java.awt.Dimension(0, 90));
         pnlPie.setPreferredSize(new java.awt.Dimension(780, 90));
 
-        btnGrabar.setBackground(new java.awt.Color(64, 124, 202));
-        btnGrabar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnGrabar.setForeground(new java.awt.Color(255, 255, 255));
         btnGrabar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Disquette.png"))); // NOI18N
         btnGrabar.setText("Grabar");
-        btnGrabar.setToolTipText("");
         btnGrabar.setAlignmentY(0.0F);
+        btnGrabar.setBackground(new java.awt.Color(64, 124, 202));
         btnGrabar.setBorderPainted(false);
+        btnGrabar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnGrabar.setForeground(new java.awt.Color(255, 255, 255));
         btnGrabar.setPreferredSize(new java.awt.Dimension(125, 57));
+        btnGrabar.setToolTipText("");
+        btnGrabar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnGrabarMouseClicked(evt);
+            }
+        });
         btnGrabar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGrabarActionPerformed(evt);
             }
         });
 
-        btnSalir.setBackground(new java.awt.Color(64, 124, 202));
-        btnSalir.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnSalir.setForeground(new java.awt.Color(255, 255, 255));
         btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Badge-cancel.png"))); // NOI18N
         btnSalir.setText("Salir");
         btnSalir.setAlignmentY(0.0F);
+        btnSalir.setBackground(new java.awt.Color(64, 124, 202));
         btnSalir.setBorderPainted(false);
+        btnSalir.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnSalir.setForeground(new java.awt.Color(255, 255, 255));
         btnSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalirActionPerformed(evt);
@@ -764,36 +852,36 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
                     .addGroup(pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnGrabar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnSalir)))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("Asignación de Productos a la Orden");
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblProductosenorden.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Cod. Producto", "Descripción", "Cod. Alterno", "Cant. Minima", "Existencia"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblProductosenorden);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(23, 23, 23)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(0, 646, Short.MAX_VALUE)))
+                        .addGap(0, 633, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -801,8 +889,7 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -819,17 +906,95 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlPie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(pnlPie, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGrabarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGrabarActionPerformed
+        
+        OrdenVO ordenVO = null;
+        OrdenBO ordenBO =null;
+        DetalleOrdenBO detalleOrdenBO=null;
+        DetalleOrdenVO detalleordenVO=null;
+        ordenBO = new OrdenBO();
+        EmpleadoBO empleadoBO=null;
+        EmpleadoVO empleadoVO=null;
+        empleadoVO=new EmpleadoVO();
+        CentroExpendioVO centroexpendioVO=null;
+        LocalVO localVo=null;
+        int respuestaOperacion = 0;
+        boolean camposValidos;
+        String nombreEstado ="ACTIVA";
+        camposValidos = 
+            (!txtCodExterno.getText().isEmpty() && 
+                !txtCodExterno.getText().trim().equals("") && 
+                !dtpFecha.datePicker.getText().isEmpty() && 
+                !dtpFecha.datePicker.getText().trim().equals(""));               
+        if (camposValidos){
+                
+                localVo=(LocalVO)cmbLocales.getSelectedItem();
+                empleadoVO=(EmpleadoVO)cmbEmpleado.getSelectedItem();
+                //nombreEstado = cmbEstado.getItemAt(cmbEstado.getSelectedIndex());
+                //usuarioVO = new UsuarioVO(codigoActual, txtNombre.getText(),
+                  //      pswClave.getText(),nombreEstado); 
+                          ordenVO = new OrdenVO(localVo.getCodigo(), 
+                          empleadoVO.getCodigo(),LocalDateTime.now(),dtpFecha.getDateTimeStrict(), txtCodExterno.getText(), empleadoLogueado.getCodigo(), nombreEstado); 
+                try{
+                    if (codigoActual==0){
+                       
+                        if(tblProductosenorden.getRowCount()>0){
+                        respuestaOperacion = ordenBO.crear(ordenVO);
+                        
+                        int codigoorden = ordenBO.buscarUltimoCodigo();
+                        int codProducto=0;
+                        float cantidadMinima=0;
+                        float existencia=0;
+                        for (int i=0; i<tblProductosenorden.getRowCount();i++){
+                            if(IsSelected(i,5, tblProductosenorden)){
+                                codProducto=Integer.parseInt(tblProductosenorden.getValueAt(i, 0).toString());
+                                cantidadMinima=Float.parseFloat(tblProductosenorden.getValueAt(i, 3).toString());
+                                existencia=Float.parseFloat(tblProductosenorden.getValueAt(i, 4).toString());
+                                guardadetalle(codigoorden,codProducto,cantidadMinima,existencia);
+                            }
+                        }
+                        } else{
+                            JOptionPane.showMessageDialog(null, "La tabla de productos está vacía");
+                        }
+                        
+                        
+                        //txtCodigo.setText(String.valueOf(respuestaOperacion));
+                    }else
+                        respuestaOperacion = ordenBO.actualizar(ordenVO);
+                    
+                    if (respuestaOperacion>0)
+                        JOptionPane.showMessageDialog(null, "Registro guardado con éxito");
+                        this.setVisible(false);
+                        this.dispose();
+                }
+                catch(Exception e){
+                    UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+                }
+                finally{
+                    ordenVO = null;
+                    ordenBO = null;
+                  
+                    this.setVisible(false);
+                    this.dispose();
+                }
+            }
+            
+        else {
+            UtilPresentacion.mostrarMensajeValidacionIncorrecta(this, 
+                "Ingrese los datos requeridos en el formulario");
+        }
+        
+        
         
     }//GEN-LAST:event_btnGrabarActionPerformed
 
@@ -840,11 +1005,23 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
 
     private void cmbCentroExpendioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCentroExpendioActionPerformed
         // TODO add your handling code here:
+        LocalBO localBO=new LocalBO();
+        CentroExpendioVO centroexpendioVO = new CentroExpendioVO();
+         try {
+            centroexpendioVO=(CentroExpendioVO)cmbCentroExpendio.getSelectedItem();
+            //cmbLocales.setModel(localBO.generaModeloDatosCombo(centroexpendioVO.getCodigo()));
+        
+        } catch (Exception e) {
+            
+             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+        }
+        finally{
+            localBO = null;   
+       
+        }
+        
+        
     }//GEN-LAST:event_cmbCentroExpendioActionPerformed
-
-    private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigoActionPerformed
 
     private void txtCodigo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigo1ActionPerformed
         // TODO add your handling code here:
@@ -862,39 +1039,32 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbPerfil2ActionPerformed
 
-    private void txtCodigo3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigo3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigo3ActionPerformed
-
     private void cmbEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbEmpleadoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbEmpleadoActionPerformed
 
-    private void txtCodigo4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigo4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigo4ActionPerformed
-
-    private void txtCodigo5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigo5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigo5ActionPerformed
-
-    private void txtCodigo6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigo6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigo6ActionPerformed
-
     private void cmbLocalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbLocalesActionPerformed
         // TODO add your handling code here:
+       CargaDatosProductosporLocal();
+        
     }//GEN-LAST:event_cmbLocalesActionPerformed
 
     private void cmbCentroExpendioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbCentroExpendioMouseClicked
         // TODO add your handling code here:
    
+        
+        
+       
+    }//GEN-LAST:event_cmbCentroExpendioMouseClicked
+
+    private void cmbCentroExpendioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCentroExpendioItemStateChanged
+        // TODO add your handling code here:
         LocalBO localBO=new LocalBO();
         CentroExpendioVO centroexpendioVO = new CentroExpendioVO();
          try {
             centroexpendioVO=(CentroExpendioVO)cmbCentroExpendio.getSelectedItem();
             cmbLocales.setModel(localBO.generaModeloDatosCombo(centroexpendioVO.getCodigo()));
-        
+            tblProductosenorden.setVisible(false);
         } catch (Exception e) {
             
              UtilPresentacion.mostrarMensajeError(this, e.getMessage());
@@ -903,8 +1073,46 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
             localBO = null;   
        
         }
+    }//GEN-LAST:event_cmbCentroExpendioItemStateChanged
+
+    private void cmbLocalesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbLocalesMouseClicked
+        // TODO add your handling code here:
        
-    }//GEN-LAST:event_cmbCentroExpendioMouseClicked
+       /* ProductoBO productoBO=new ProductoBO();
+        LocalVO localVO=new LocalVO();
+         try {
+            localVO=(LocalVO)cmbLocales.getSelectedItem();
+            tblProductosenorden.setModel(productoBO.generaModeloDatosTabla(localVO.getCodigo(), 
+                    this.proveedorEmpleadoLogueado.getCodigo(),new Object[]{"CODIGO", "DESCRIPCIÓN", "COD.EXTERNO",
+                        "CATIDAD MÍNIMA","EXISTENCIA","SELECCIONAR"}));
+            creachecboxentabla(5, tblProductosenorden);
+        } catch (Exception e) {
+            
+             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+        }
+        finally{
+            productoBO = null;   
+       
+        }
+       */
+        
+    }//GEN-LAST:event_cmbLocalesMouseClicked
+
+    private void cmbLocalesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbLocalesItemStateChanged
+        // TODO add your handling code here:
+        
+         CargaDatosProductosporLocal();
+         
+    }//GEN-LAST:event_cmbLocalesItemStateChanged
+
+    private void btnGrabarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGrabarMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGrabarMouseClicked
+
+    private void cmbCentroExpendioPopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_cmbCentroExpendioPopupMenuWillBecomeVisible
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_cmbCentroExpendioPopupMenuWillBecomeVisible
 
     /**
      * @param args the command line arguments
@@ -958,22 +1166,18 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> cmbLocales;
     private javax.swing.JComboBox<String> cmbPerfil1;
     private javax.swing.JComboBox<String> cmbPerfil2;
+    private com.github.lgooddatepicker.components.DateTimePicker dtpFecha;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblCodigo1;
     private javax.swing.JLabel lblCodigo2;
-    private javax.swing.JLabel lblCodigo3;
-    private javax.swing.JLabel lblCodigo4;
-    private javax.swing.JLabel lblCodigo5;
-    private javax.swing.JLabel lblCodigo6;
     private javax.swing.JLabel lblConfirmacion1;
     private javax.swing.JLabel lblConfirmacion2;
     private javax.swing.JLabel lblEstado;
@@ -1004,13 +1208,10 @@ public class FrmOrdenNueva extends javax.swing.JDialog {
     private javax.swing.JPasswordField pswClave2;
     private javax.swing.JPasswordField pswConfirmacion1;
     private javax.swing.JPasswordField pswConfirmacion2;
-    private javax.swing.JTextField txtCodigo;
+    private javax.swing.JTable tblProductosenorden;
+    private javax.swing.JTextField txtCodExterno;
     private javax.swing.JTextField txtCodigo1;
     private javax.swing.JTextField txtCodigo2;
-    private javax.swing.JTextField txtCodigo3;
-    private javax.swing.JTextField txtCodigo4;
-    private javax.swing.JTextField txtCodigo5;
-    private javax.swing.JTextField txtCodigo6;
     private javax.swing.JTextField txtNombre1;
     private javax.swing.JTextField txtNombre2;
     // End of variables declaration//GEN-END:variables

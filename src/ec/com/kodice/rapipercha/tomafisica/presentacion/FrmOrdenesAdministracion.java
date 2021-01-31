@@ -6,11 +6,10 @@
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
 
 import ec.com.kodice.rapipercha.tomafisica.negocio.OrdenBO;
-import ec.com.kodice.rapipercha.util.UtilPresentacion;
 import ec.com.kodice.rapipercha.administracion.persistencia.EmpleadoVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
+import ec.com.kodice.rapipercha.tomafisica.negocio.DetalleOrdenBO;
 import ec.com.kodice.rapipercha.util.UtilPresentacion;
-import java.time.Clock;
 import java.time.LocalDate;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -45,13 +44,15 @@ public class FrmOrdenesAdministracion extends javax.swing.JFrame {
         
         dtpFecha.setDateToToday();
         cargarTabla(dtpFecha.getDate());
+        
         this.setLocationRelativeTo(null);
         this.setVisible(true);
                
     }
 
     private FrmOrdenesAdministracion() {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //dtpFecha.setDateToToday();
+        //cargarTabla(dtpFecha.getDate());
     }
 
     private void cargarTabla(LocalDate fecha) {
@@ -61,6 +62,7 @@ public class FrmOrdenesAdministracion extends javax.swing.JFrame {
                     dtpFecha.getDate(), 
                     new Object[]{"CODIGO", "FECHA A REALIZAR", "C.EXPENDIO",
                         "LOCAL","DIRECCIÓN","GENERADO POR","GENERADO EN","ESTADO"}));
+           
         } catch (Exception e) {
             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
         } finally {
@@ -410,37 +412,40 @@ public class FrmOrdenesAdministracion extends javax.swing.JFrame {
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         FrmOrdenNueva frmOrdenNueva = new FrmOrdenNueva(empleadoLogueado,proveedorEmpleadoLogueado);
         frmOrdenNueva.setVisible(true);
-        //cargarModelo();
+        dtpFecha.setDateToToday();
+        cargarTabla(dtpFecha.getDate());
 
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
-        /*String codigoElegido = "";
+        String codigoElegido = "";
         String descripcionElegido = "";
         boolean confirmacionBorrado = false;
         int fila = tblOrdenes.getSelectedRow();
         if (fila >= 0) {
             codigoElegido = tblOrdenes.getModel().getValueAt(
                     fila, 0).toString();
-            descripcionElegido = tblOrdenes.getModel().getValueAt(
-                    fila, 1).toString();
+           
         }
         if (!(codigoElegido.isEmpty() | codigoElegido.isBlank())) {
             confirmacionBorrado = (UtilPresentacion.mostrarMensajeConfirmacion(
-                    this, "Desea eliminar el registro:\n" + codigoElegido + " - "
-                    + descripcionElegido) == JOptionPane.YES_OPTION);
+                    this, "Desea eliminar el registro de Orden No. :\n" + 
+                            codigoElegido) == JOptionPane.YES_OPTION);
             if (confirmacionBorrado) {
-                UsuarioBO usuarioBO = new UsuarioBO();
+                OrdenBO ordenBO = new OrdenBO();
+                DetalleOrdenBO detalleOrdenBO = new DetalleOrdenBO();
                 try {
-                    usuarioBO.eliminar(Integer.valueOf(codigoElegido));
-                } catch (Exception e) {
+                    detalleOrdenBO.eliminarDetallePorOrden(Integer.valueOf(codigoElegido));
+                    ordenBO.eliminar(Integer.valueOf(codigoElegido));
+                    } catch (Exception e) {
                     UtilPresentacion.mostrarMensajeError(this, e.getMessage());
                 } finally {
-                    usuarioBO = null;
+                    ordenBO = null;
                 }
             }
-            cargarModelo();
-        }*/
+            dtpFecha.setDateToToday();
+            cargarTabla(dtpFecha.getDate());
+        }
 
     }//GEN-LAST:event_btnBorrarActionPerformed
 
@@ -450,7 +455,7 @@ public class FrmOrdenesAdministracion extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        String codigoElegido = "";
+      /*  String codigoElegido = "";
         int fila = tblOrdenes.getSelectedRow();
         if (fila >= 0) {
             codigoElegido = tblOrdenes.getModel().getValueAt(
@@ -458,10 +463,14 @@ public class FrmOrdenesAdministracion extends javax.swing.JFrame {
         }
         if (!(codigoElegido.isEmpty() | codigoElegido.isBlank())) {
             FrmOrdenNueva frmOrdenNueva = new FrmOrdenNueva(
-                    Integer.valueOf(codigoElegido), false);
+                    Integer.valueOf(codigoElegido), false,empleadoLogueado,proveedorEmpleadoLogueado);
             frmOrdenNueva.setVisible(true);
-       //     cargarModelo();
-        }
+            dtpFecha.setDateToToday();
+            cargarTabla(dtpFecha.getDate());
+        }*/
+      UtilPresentacion.mostrarMensajeInformativo(pnlPie, "No se pueden modificar las ordenes generadas,"
+              + "se deberá borrar la orden y generar una nueva ");
+      
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void tblOrdenesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblOrdenesMousePressed
@@ -477,9 +486,9 @@ public class FrmOrdenesAdministracion extends javax.swing.JFrame {
             btnBorrar.setEnabled(true);
             if (evt.getClickCount() == 2 && !codigoElegido.isEmpty() && !codigoElegido.isBlank()) {
                 FrmOrdenNueva frmOrdenNueva = new FrmOrdenNueva(
-                        Integer.valueOf(codigoElegido),true);
+                        Integer.valueOf(codigoElegido),true,empleadoLogueado,proveedorEmpleadoLogueado);
                 frmOrdenNueva.setVisible(true);
-              //  cargarModelo();
+           
             }
         }
     }//GEN-LAST:event_tblOrdenesMousePressed
@@ -494,9 +503,10 @@ public class FrmOrdenesAdministracion extends javax.swing.JFrame {
         }
         if (!(codigoElegido.isEmpty() | codigoElegido.isBlank())) {
             FrmOrdenNueva frmOrdenNueva = new FrmOrdenNueva(
-                    Integer.valueOf(codigoElegido), true);
+                    Integer.valueOf(codigoElegido), true,empleadoLogueado,proveedorEmpleadoLogueado);
             frmOrdenNueva.setVisible(true);
-        //    cargarModelo();
+            dtpFecha.setDateToToday();
+        cargarTabla(dtpFecha.getDate());
         }
     }//GEN-LAST:event_btnConsultarActionPerformed
 
