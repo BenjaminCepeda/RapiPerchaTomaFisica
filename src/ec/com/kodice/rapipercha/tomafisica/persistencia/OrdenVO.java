@@ -103,8 +103,30 @@ public class OrdenVO {
         this.estado = estado;
     }
 
-    public OrdenVO() {
+     public OrdenVO(int localCodigo, int usuarioCodigo, 
+            LocalDateTime fechaGeneracion, LocalDateTime fechaARealizar, 
+            String codigoExternoOrden, int codigoUsuarioGeneracion, 
+            String estado) {
+        this.codigo = codigo;
+        this.localVO.setCodigo(localCodigo);
+        this.usuarioCodigo = usuarioCodigo;
+        this.fechaGeneracion = fechaGeneracion;
+        this.fechaARealizar = fechaARealizar;
+        this.codigoExternoOrden = codigoExternoOrden;
+        this.codigoUsuarioGeneracion = codigoUsuarioGeneracion;
+        this.estado = estado;
     }
+    
+     
+     public OrdenVO(int codigoUltimaOrden) {
+        this.codigo = codigo;
+     }
+     
+      public OrdenVO() {
+        
+     }
+     
+   
     
     
 

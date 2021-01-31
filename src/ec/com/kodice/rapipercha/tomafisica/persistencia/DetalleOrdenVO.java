@@ -113,6 +113,21 @@ public class DetalleOrdenVO {
         this.cantidadVencido = cantidadVencido;
         this.fechaProceso = fechaProceso;
     }
+    
+    public DetalleOrdenVO(int ordenCodigo, int productoCodigo, 
+            float cantidadMinima, float existencia, float cantidadRevisada, 
+            float cantidadMalEstado, float cantidadVencido, 
+            LocalDateTime fechaProceso) {
+        this.setOrdenCodigo(ordenCodigo);
+        this.getProducto().setCodigo( productoCodigo);
+        this.cantidadMinima = cantidadMinima;
+        this.existencia = existencia;
+        this.cantidadRevisada = cantidadRevisada;
+        this.cantidadMalEstado = cantidadMalEstado;
+        this.cantidadVencido = cantidadVencido;
+        this.fechaProceso = fechaProceso;
+    }
+    
 
     public DetalleOrdenVO() {
     }

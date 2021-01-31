@@ -83,6 +83,17 @@ public class DetalleOrdenBO {
         }
         return (filasAfectadas);
     }
+    
+      public int eliminarDetallePorOrden(int codigo) throws Exception {
+        int filasAfectadas = 0;
+        try {
+            filasAfectadas = detalleOrdenDAO.eliminarDetalleporCodigoOrden(codigo);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage()
+                    + "\n[" + this.getClass().getName() + "]");
+        }
+        return (filasAfectadas);
+    }
 
     public int registrarTomaFisica(DetalleOrdenVO detalleOrdenVO) throws Exception {
         int filasAfectadas = 0;

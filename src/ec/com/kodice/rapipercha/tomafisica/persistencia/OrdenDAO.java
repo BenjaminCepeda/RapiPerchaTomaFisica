@@ -119,6 +119,39 @@ public class OrdenDAO {
         }        
         return (ordenVO);
     }
+    
+    
+    
+    
+    public int buscarultimocodigo() throws Exception {
+        Connection conexion = null;
+        PreparedStatement sentencia = null;
+        OrdenVO ordenVO = null;
+        int ultimoCodigo=0;
+        try {
+            conexion = CustomConnection.getConnection();
+            String consulta = "SELECT MAX(`ORD_CODIGO`) AS `ORD_CODIGO` FROM tordenes";
+            sentencia = conexion.prepareStatement(consulta);
+            ResultSet resultado = sentencia.executeQuery();
+            while (resultado.next()) {
+                ultimoCodigo = (resultado.getInt("ord_codigo"));
+            }
+        } 
+        catch(Exception e){
+            conexion.close();
+            throw new Exception(e.getMessage() + "\n[" + this.getClass().getName()
+                    + "] ");
+        }    
+        finally{
+            try {
+                conexion.close();
+            } catch (SQLException e){
+                throw new Exception(e.getMessage() + "\n[" 
+                        + this.getClass().getName() + "] ");
+            }
+        }        
+        return (ultimoCodigo);
+    }
 
     /**
      * Devuelve el listado de Ordenes
@@ -195,7 +228,7 @@ public class OrdenDAO {
                     + "FROM TORDENES "
                     + "INNER JOIN TLOCALES L ON TORDENES.loc_codigo = l.loc_codigo "
                     + "INNER JOIN TCENTRO_EXPENDIO C ON L.cen_codigo = C.cen_codigo "
-                    + "WHERE usu_codigo = ? and "
+                    + "WHERE ord_codigo_usuario_generacion = ? and "
                     + "DATE_FORMAT(ord_fecha_arealizar,'%Y%m%d') = "
                     + "DATE_FORMAT( ?, '%Y%m%d') "
                     + "ORDER BY ord_fecha_arealizar";

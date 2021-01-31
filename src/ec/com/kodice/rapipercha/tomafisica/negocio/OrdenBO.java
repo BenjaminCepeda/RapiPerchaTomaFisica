@@ -48,6 +48,18 @@ public class OrdenBO {
         }
         return (ordenVO);
     }
+    
+      public int buscarUltimoCodigo() throws Exception {
+        OrdenVO ordenVO = null;
+        int ultimoCodigoOrden=0;
+        try {
+            ultimoCodigoOrden = ordenDAO.buscarultimocodigo();
+        } catch (Exception e) {
+            throw new Exception(e.getMessage()
+                    + "\n[" + this.getClass().getName() + "]");
+        }
+        return (ultimoCodigoOrden);
+    }
 
     public List<OrdenVO> buscarTodos() throws Exception {
         List<OrdenVO> listaElementos = null;
@@ -97,7 +109,7 @@ public class OrdenBO {
                     usuarioCodigo, fechaARealizar);
             if (listaElementos != null) {
                 for (OrdenVO ordenVO : listaElementos) {
-                    usuarioGeneroOrden = usuarioBO.buscar(ordenVO.getCodigo());
+                    usuarioGeneroOrden = usuarioBO.buscar(ordenVO.getCodigoUsuarioGeneracion());
                     dtmListaElementos.addRow(new Object[]{
                       ordenVO.getCodigo(), ordenVO.getFechaARealizar(),
                       ordenVO.getLocalVO().getCentroExpendioVO().getRazonSocial(),
