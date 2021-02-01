@@ -95,6 +95,17 @@ public class OrdenBO {
         return (filasAfectadas);
     }
 
+    public int cerrarOrden(int codigo) throws Exception {
+        int filasAfectadas = 0;
+        try {
+            filasAfectadas = ordenDAO.cerrarOrden(codigo);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage()
+                    + "\n[" + this.getClass().getName() + "]");
+        }
+        return (filasAfectadas);
+    }
+
     public DefaultTableModel generaModeloDatosTabla(int usuarioCodigo,
             LocalDate fechaARealizar,
             Object[] titulosCabecera) 

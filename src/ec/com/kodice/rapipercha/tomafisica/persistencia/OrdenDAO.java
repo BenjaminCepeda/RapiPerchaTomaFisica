@@ -228,7 +228,7 @@ public class OrdenDAO {
                     + "FROM TORDENES "
                     + "INNER JOIN TLOCALES L ON TORDENES.loc_codigo = l.loc_codigo "
                     + "INNER JOIN TCENTRO_EXPENDIO C ON L.cen_codigo = C.cen_codigo "
-                    + "WHERE ord_codigo_usuario_generacion = ? and "
+                    + "WHERE usu_codigo = ? and "
                     + "DATE_FORMAT(ord_fecha_arealizar,'%Y%m%d') = "
                     + "DATE_FORMAT( ?, '%Y%m%d') "
                     + "ORDER BY ord_fecha_arealizar";
@@ -285,7 +285,7 @@ public class OrdenDAO {
         int filasAfectadas = 0;
         try {
             conexion = CustomConnection.getConnection();
-            String consulta = "UPDATE TPROVEEDORES "
+            String consulta = "UPDATE TORDENES "
                     + "SET loc_codigo = ?, "
                     + "usu_codigo = ?, "
                     + "ord_fecha_arealizar = ?, "
@@ -355,5 +355,42 @@ public class OrdenDAO {
         return (filasAfectadas);
 
     }
+
+    /**
+     * Permite actualizar el estado de una Orden
+     *
+     * @param codigo Codigo de la Orden 
+     * @return Numero de registros actualizados
+     * @throws Exception
+     */
+    public int cerrarOrden(int codigo) throws Exception {
+        Connection conexion = null;
+        PreparedStatement sentencia = null;
+        int filasAfectadas = 0;
+        try {
+            conexion = CustomConnection.getConnection();
+            String consulta = "UPDATE TORDENES "
+                    + "SET ord_estado = 'PROCESADA' "
+                    + "WHERE ord_codigo = ?";
+            sentencia = conexion.prepareStatement(consulta);
+            sentencia.setInt(1, codigo);
+            filasAfectadas = sentencia.executeUpdate();
+        } 
+        catch(Exception e){
+            conexion.close();
+            throw new Exception(e.getMessage() + "\n[" + this.getClass().getName()
+                    + "] ");
+        }    
+        finally{
+            try {
+                conexion.close();
+            } catch (SQLException e){
+                throw new Exception(e.getMessage() + "\n[" 
+                        + this.getClass().getName() + "] ");
+            }
+        }        
+        return (filasAfectadas);
+    }
+
 
 }

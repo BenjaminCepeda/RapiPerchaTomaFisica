@@ -6,12 +6,14 @@
 
 package ec.com.kodice.rapipercha.tomafisica.presentacion;
 
+import ec.com.kodice.rapipercha.administracion.negocio.UsuarioBO;
 import ec.com.kodice.rapipercha.tomafisica.negocio.OrdenBO;
 import ec.com.kodice.rapipercha.administracion.persistencia.EmpleadoVO;
 import ec.com.kodice.rapipercha.administracion.persistencia.ProveedorVO;
 import ec.com.kodice.rapipercha.util.UtilPresentacion;
 import java.time.LocalDate;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 /**
@@ -53,7 +55,7 @@ public class FrmOrdenListado extends JFrame {
                 empleadoLogueado.getUsuario().getCodigo(), fecha,
                 new Object[]{
                     "CODIGO", "A REALIZAR", "RAZON SOCIAL", "LOCAL", "DIRECCION",
-                    "GENERADO POR", "GENERADA EN"}));
+                    "GENERADO POR", "GENERADA EN","ESTADO"}));
         }
         catch ( Exception e) {
             UtilPresentacion.mostrarMensajeError(this, e.getMessage());
@@ -62,6 +64,7 @@ public class FrmOrdenListado extends JFrame {
             ordenBO = null;   
             btnConsultar.setEnabled(false);
             btnTomaFisica.setEnabled(false);
+            btnCerrarOrden.setEnabled(false);
         }
             
     }
@@ -89,6 +92,7 @@ public class FrmOrdenListado extends JFrame {
         btnTomaFisica = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         lblLogoKodice = new javax.swing.JLabel();
+        btnCerrarOrden = new javax.swing.JButton();
         dtpFecha = new com.github.lgooddatepicker.components.DatePicker();
         lblFecha = new javax.swing.JLabel();
         btnMostrar = new javax.swing.JButton();
@@ -141,7 +145,7 @@ public class FrmOrdenListado extends JFrame {
                         .addComponent(lblTituloEmpresa)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblNombreEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 164, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         pnlCabeceraLayout.setVerticalGroup(
             pnlCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -212,7 +216,7 @@ public class FrmOrdenListado extends JFrame {
         });
 
         btnTomaFisica.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Clipboard b.png"))); // NOI18N
-        btnTomaFisica.setText("TomaFisica");
+        btnTomaFisica.setText("Toma Física");
         btnTomaFisica.setAlignmentY(0.0F);
         btnTomaFisica.setBackground(new java.awt.Color(64, 124, 202));
         btnTomaFisica.setBorderPainted(false);
@@ -250,20 +254,39 @@ public class FrmOrdenListado extends JFrame {
         lblLogoKodice.setMinimumSize(new java.awt.Dimension(125, 55));
         lblLogoKodice.setPreferredSize(new java.awt.Dimension(125, 55));
 
+        btnCerrarOrden.setBackground(new java.awt.Color(64, 124, 202));
+        btnCerrarOrden.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnCerrarOrden.setForeground(new java.awt.Color(255, 255, 255));
+        btnCerrarOrden.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ec/com/kodice/rapipercha/imagenes/Folder docs.png"))); // NOI18N
+        btnCerrarOrden.setText("Cerrar Orden");
+        btnCerrarOrden.setAlignmentY(0.0F);
+        btnCerrarOrden.setBorderPainted(false);
+        btnCerrarOrden.setIconTextGap(1);
+        btnCerrarOrden.setMaximumSize(new java.awt.Dimension(118, 55));
+        btnCerrarOrden.setMinimumSize(new java.awt.Dimension(118, 55));
+        btnCerrarOrden.setPreferredSize(new java.awt.Dimension(118, 55));
+        btnCerrarOrden.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCerrarOrdenActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlPieLayout = new javax.swing.GroupLayout(pnlPie);
         pnlPie.setLayout(pnlPieLayout);
         pnlPieLayout.setHorizontalGroup(
             pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPieLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnTomaFisica, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnTomaFisica, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCerrarOrden, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addComponent(lblLogoKodice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16))
+                .addGap(24, 24, 24))
         );
         pnlPieLayout.setVerticalGroup(
             pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -274,7 +297,8 @@ public class FrmOrdenListado extends JFrame {
                     .addGroup(pnlPieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnTomaFisica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnTomaFisica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnCerrarOrden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -407,6 +431,7 @@ public class FrmOrdenListado extends JFrame {
         String codigoElegido = "";
         String nombreCentroExpendio="";
         String nombreLocal="";
+        String estadoOrden;
         int fila = source.rowAtPoint(evt.getPoint());
         //int column = source.columnAtPoint(evt.getPoint());
         if (fila >= 0) {
@@ -416,8 +441,17 @@ public class FrmOrdenListado extends JFrame {
                     fila, 2).toString();
             nombreLocal = tblOrdenes.getModel().getValueAt(
                     fila, 3).toString();            
+            estadoOrden  = tblOrdenes.getModel().getValueAt(
+                    fila, 7).toString();            
             btnConsultar.setEnabled(true);
-            btnTomaFisica.setEnabled(true);
+            if (estadoOrden.equalsIgnoreCase("ACTIVA")){
+                btnTomaFisica.setEnabled(true);
+                btnCerrarOrden.setEnabled(true);
+            }
+            else{
+                btnTomaFisica.setEnabled(false);
+                btnCerrarOrden.setEnabled(false);
+            }
             if (evt.getClickCount() == 2 && !codigoElegido.isEmpty() && !codigoElegido.isBlank()) {
                 FrmDetalleOrdenListado frmDetalleOrdenListado = new 
                 FrmDetalleOrdenListado(
@@ -434,6 +468,44 @@ public class FrmOrdenListado extends JFrame {
     private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarActionPerformed
         cargarModelo(dtpFecha.getDate());
     }//GEN-LAST:event_btnMostrarActionPerformed
+
+    private void btnCerrarOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarOrdenActionPerformed
+        String codigoElegido = "";
+        String nombreCentroExpendio="";
+        String nombreLocal="";
+        String estadoOrden;
+
+        boolean confirmacion = false;
+        int fila = tblOrdenes.getSelectedRow();
+        if (fila >= 0) {
+            codigoElegido = tblOrdenes.getModel().getValueAt(
+                    fila, 0).toString();
+            nombreCentroExpendio = tblOrdenes.getModel().getValueAt(
+                    fila, 2).toString();
+            nombreLocal = tblOrdenes.getModel().getValueAt(
+                    fila, 3).toString();            
+            estadoOrden  = tblOrdenes.getModel().getValueAt(
+                    fila, 7).toString();            
+        }
+        if (!(codigoElegido.isEmpty() | codigoElegido.isBlank())) {
+            confirmacion = (UtilPresentacion.mostrarMensajeConfirmacion(
+                    this, "Desea Cerrar la Orden:\n" + codigoElegido + " - "
+                    + nombreCentroExpendio + " - " + nombreLocal)
+                    == JOptionPane.YES_OPTION);
+            if (confirmacion) {
+                OrdenBO ordenBO = new OrdenBO();
+                try {
+                    ordenBO.cerrarOrden(Integer.valueOf(codigoElegido));
+                } catch (Exception e) {
+                    UtilPresentacion.mostrarMensajeError(this, e.getMessage());
+                } finally {
+                    ordenBO = null;
+                }
+            }
+            cargarModelo(dtpFecha.getDate());
+        }
+
+    }//GEN-LAST:event_btnCerrarOrdenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -486,6 +558,7 @@ public class FrmOrdenListado extends JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCerrarOrden;
     private javax.swing.JButton btnConsultar;
     private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnSalir;
